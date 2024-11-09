@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+option go_package = "github.com/ossipesonen/go-traffic-lights";
+
+package proto;
+
+import "google/protobuf/empty.proto";
+
+service TrafficLightsService {
+    // Providers
+    rpc ListProviders (google.protobuf.Empty) returns (ListProviderResponse) {}
+    rpc ReadProvider (ReadProviderRequest) returns (ReadProviderResponse) {}
+
+    // Users
+    rpc Login(LoginRequest) returns (TokenResponse) {}
+    rpc Register(RegistrationRequest) returns (google.protobuf.Empty) {}
+    rpc Logout(RegistrationRequest) returns (google.protobuf.Empty) {}
+}
+
+message RegistrationRequest {
+    string email = 1;
+    string password = 2;
+    string username = 3;
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message TokenResponse {
+    string access_token = 1;
+    int32 exp = 2;
+    string token_type = 3;        
+    optional string refresh_token = 4;
+    optional string scope = 5;
+}
+
+message ReadProviderRequest {
+    int32 id = 1;
+}
+
+message ReadProviderResponse {
+    int32 id = 1;
+    string name = 2;
+}
+
+message ListProviderResponse {
+    repeated ReadProviderResponse providers = 1;
+}
