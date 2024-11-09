@@ -1,11 +1,13 @@
 package services
 
 import (
+	"database/sql"
 	"errors"
 	"log"
 	"time"
 
 	"github.com/ossipesonen/go-traffic-lights/internal/app/auth"
+	"github.com/ossipesonen/go-traffic-lights/internal/app/core"
 	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
 )
 
@@ -15,7 +17,9 @@ type UserRepository interface {
 	Find(email string) (*models.User, error)
 	Add(user *models.User) error
 	SaveRefreshToken(refreshTokenEntry *models.RefreshTokenEntry) error
-	RevokeRefreshToken(userId int) error
+	GetRefreshToken(refreshToken string, userId int) (*models.RefreshTokenEntry, error)
+	RevokeRefreshToken(refreshToken string, userId int) error
+	RevokeAllRefreshTokens(userId int) error
 }
 
 type UserService struct {
@@ -38,16 +42,16 @@ func NewUserService(repository UserRepository, auth *auth.Auth, logger *log.Logg
 func (s *UserService) Authenticate(email string, password string) (*models.User, error) {
 	user, err := s.repository.Find(email)
 
-	// Not found
+	// User not found
 	if err != nil {
-		return nil, err
+		return nil, core.NewError(core.ErrUserNotFound, err)
 	}
 
 	err = s.auth.Password.Compare(user.Password, user.Salt, password)
 
-	// Unauthenticated
+	// Password comparison failed -> unauthenticated
 	if err != nil {
-		return nil, err
+		return nil, core.NewError(core.ErrInvalidPassword, err)
 	}
 
 	// User authenticated
@@ -61,14 +65,13 @@ func (s *UserService) CreateUser(userInfo *models.UserInfo) (*models.User, error
 	existingUser, _ := s.repository.Find(userInfo.Email)
 
 	if existingUser != nil {
-		return nil, errors.New("user-already-exists")
+		return nil, core.NewError(core.ErrUserAlreadyExists, errors.New("user already exists"))
 	}
 
 	hashSalt, err := s.auth.Password.GenerateHash([]byte(userInfo.Password), []byte{})
 
 	if err != nil {
-		s.logger.Printf("hashing password failed: %v", err)
-		return nil, err
+		return nil, core.NewError(core.ErrInternal, err)
 	}
 
 	user := models.User{
@@ -81,7 +84,7 @@ func (s *UserService) CreateUser(userInfo *models.UserInfo) (*models.User, error
 	err = s.repository.Add(&user)
 
 	if err != nil {
-		return nil, err
+		return nil, core.NewError(core.ErrInternal, err)
 	}
 
 	return &user, nil
@@ -91,7 +94,7 @@ func (s *UserService) Find(userId int) (*models.User, error) {
 	user, err := s.repository.Read(userId)
 
 	if err != nil {
-		return nil, err
+		return nil, core.NewError(core.ErrInternal, err)
 	}
 
 	return user, nil
@@ -100,8 +103,7 @@ func (s *UserService) Find(userId int) (*models.User, error) {
 func (s *UserService) GenerateTokens(user *models.User) (*auth.IssuedTokens, error) {
 	tokens, err := s.auth.IssueToken(user.Id)
 	if err != nil {
-		s.logger.Printf("Unable to generate tokens for user: %v", err)
-		return nil, errors.New("unable to issue tokens")
+		return nil, core.NewError(core.ErrInternal, err)
 	}
 
 	// Refresh token is persisted in storage so we can revoke it as it's used to refresh
@@ -112,12 +114,70 @@ func (s *UserService) GenerateTokens(user *models.User) (*auth.IssuedTokens, err
 	})
 
 	if err != nil {
-		s.logger.Printf("Unable to persist refresh token: %v", err)
-		return nil, errors.New("unable to save refresh token")
+		return nil, core.NewError(core.ErrInternal, err)
 	}
 
 	return &auth.IssuedTokens{
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,
 	}, nil
+}
+
+func (s *UserService) RefreshTokens(refreshToken string, userId int) (*auth.IssuedTokens, error) {
+	user, err := s.Find(userId)
+
+	if err != nil {
+		return nil, core.NewError(core.ErrInternal, err)
+	}
+
+	// Ensure token is still valid
+	token, err := s.repository.GetRefreshToken(refreshToken, userId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, core.NewError(core.ErrRevokedRefreshToken, err)
+		}
+
+		return nil, core.NewError(core.ErrInternal, err)
+	}
+
+	if token.Expires.Before(time.Now()) {
+		// Delete the refresh token as it is already expired
+		go s.RevokeRefreshToken(refreshToken, userId)
+		return nil, core.NewError(core.ErrExpiredRefreshToken, err)
+	}
+
+	tokens, err := s.GenerateTokens(user)
+	if err != nil {
+		return nil, err
+	}
+
+	// Finally revoke used refresh token
+	go s.RevokeRefreshToken(refreshToken, userId)
+
+	return &auth.IssuedTokens{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+	}, nil
+}
+
+func (s *UserService) RevokeRefreshToken(refreshToken string, userId int) error {
+	err := s.repository.RevokeRefreshToken(refreshToken, userId)
+
+	if err != nil {
+		// log here as we also run this call on a goroutine to revoke refresh tokens from storage
+		s.logger.Printf("something went wrong when attempting to revoke refresh token: %v", err)
+		return core.NewError(core.ErrInternal, err)
+	}
+
+	return nil
+}
+
+func (s *UserService) RevokeAllRefreshTokens(userId int) error {
+	err := s.repository.RevokeAllRefreshTokens(userId)
+
+	if err != nil {
+		return core.NewError(core.ErrInternal, err)
+	}
+
+	return nil
 }

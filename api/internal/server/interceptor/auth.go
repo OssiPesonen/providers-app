@@ -15,7 +15,7 @@ import (
 
 type key string
 
-const userIdKey key = "user_id"
+const UserIdKey key = "user_id"
 
 type (
 	// Validator defines an interface for token validation. This is satisfied by the AuthService.
@@ -69,7 +69,7 @@ func (a *AuthInterceptor) UnaryAuthMiddleware(ctx context.Context, req any, info
 	}
 
 	// add our user ID to the context, so we can use it in our RPC handler
-	ctx = context.WithValue(ctx, userIdKey, userID)
+	ctx = context.WithValue(ctx, UserIdKey, userID)
 
 	// call our handler
 	return handler(ctx, req)

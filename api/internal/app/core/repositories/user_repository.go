@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"log"
+	"time"
 
 	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
 	"github.com/ossipesonen/go-traffic-lights/internal/app/core/services"
@@ -96,7 +97,18 @@ func (r *UserRepository) SaveRefreshToken(refreshTokenEntry *models.RefreshToken
 }
 
 // Revoke all refresh tokens by purging them from the sessions table
-func (r *UserRepository) RevokeRefreshToken(userId int) error {
+func (r *UserRepository) RevokeRefreshToken(token string, userId int) error {
+	sqlStatement := `DELETE FROM sessions WHERE token = $1 AND user_id = $1;`
+	_, err := r.db.Handle().Exec(sqlStatement, token, userId)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *UserRepository) RevokeAllRefreshTokens(userId int) error {
 	sqlStatement := `DELETE FROM sessions WHERE user_id = $1;`
 	_, err := r.db.Handle().Exec(sqlStatement, userId)
 
@@ -105,4 +117,24 @@ func (r *UserRepository) RevokeRefreshToken(userId int) error {
 	}
 
 	return nil
+}
+
+func (r *UserRepository) GetRefreshToken(token string, userId int) (*models.RefreshTokenEntry, error) {
+	var refreshToken string
+	var expiresAt time.Time
+	var id int
+
+	err := r.db.Handle().
+		QueryRow("select token, expires, user_id from sessions where token = $1 AND user_id = $2", token, userId).
+		Scan(&userId, &refreshToken, &expiresAt, &id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.RefreshTokenEntry{
+		RefreshToken: refreshToken,
+		UserId:       id,
+		Expires:      expiresAt,
+	}, nil
 }

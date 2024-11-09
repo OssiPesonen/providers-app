@@ -21,8 +21,14 @@ type UserService interface {
 	CreateUser(userInfo *models.UserInfo) (*models.User, error)
 	// Finds a user resource using only the ID
 	Find(userId int) (*models.User, error)
-	// Generate access and refresh token for user resource
+	// Generate access and refresh token for user
 	GenerateTokens(user *models.User) (*auth.IssuedTokens, error)
+	// Generate new pair of access and refresh token for user
+	RefreshTokens(refreshToken string, userId int) (*auth.IssuedTokens, error)
+	// Revoke a specific refresh token for given user
+	RevokeRefreshToken(refreshToken string, userId int) error
+	// Revoke all active refresh tokens for user
+	RevokeAllRefreshTokens(userId int) error
 }
 
 type ProviderService interface {

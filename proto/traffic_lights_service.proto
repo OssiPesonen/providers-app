@@ -12,9 +12,15 @@ service TrafficLightsService {
     rpc ReadProvider (ReadProviderRequest) returns (ReadProviderResponse) {}
 
     // Users
-    rpc Login(LoginRequest) returns (TokenResponse) {}
-    rpc Register(RegistrationRequest) returns (google.protobuf.Empty) {}
-    rpc Logout(RegistrationRequest) returns (google.protobuf.Empty) {}
+    rpc GetToken(LoginRequest) returns (TokenResponse) {}
+    rpc RegisterUser(RegistrationRequest) returns (google.protobuf.Empty) {}
+    rpc RefreshToken(RefreshTokenRequest) returns (TokenResponse) {}
+    rpc RevokeRefreshToken(RefreshTokenRequest) returns (google.protobuf.Empty) {}
+    rpc RevokeAllRefreshToken(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+}
+
+message RefreshTokenRequest {
+    string refresh_token = 1;
 }
 
 message RegistrationRequest {

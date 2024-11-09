@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -8,11 +9,13 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/ossipesonen/go-traffic-lights/internal/app"
 	"github.com/ossipesonen/go-traffic-lights/internal/app/auth"
+	"github.com/ossipesonen/go-traffic-lights/internal/app/core"
 	"github.com/ossipesonen/go-traffic-lights/internal/config"
 	"github.com/ossipesonen/go-traffic-lights/internal/server/interceptor"
 	"github.com/ossipesonen/go-traffic-lights/pkg/database"
 	pb "github.com/ossipesonen/go-traffic-lights/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 )
 
 // Server must implement TrafficLightsServiceClient interface
@@ -69,4 +72,37 @@ func New(config *config.Config, logger *log.Logger) *grpc.Server {
 	}
 
 	return s
+}
+
+type ServerError struct {
+	Message string
+	Code    codes.Code
+}
+
+func (s *Server) FromError(err error) ServerError {
+	var serverError ServerError
+	var serviceError core.Error
+
+	if errors.As(err, &serviceError) {
+		serverError.Message = serviceError.ApplicationError().Error()
+		serviceError := serviceError.ServiceError()
+
+		switch serviceError {
+		case core.ErrRevokedRefreshToken:
+		case core.ErrExpiredRefreshToken:
+			serverError.Code = codes.Unauthenticated
+		case core.ErrUserNotFound:
+			serverError.Code = codes.Unauthenticated
+		case core.ErrUserAlreadyExists:
+			serverError.Code = codes.AlreadyExists
+		case core.ErrInvalidPassword:
+			serverError.Code = codes.Unauthenticated
+
+		default:
+			// Uncontrolled and unidentified error types are internal errors
+			serverError.Code = codes.Internal
+		}
+	}
+
+	return serverError
 }
