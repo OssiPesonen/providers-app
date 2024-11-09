@@ -1,11 +1,12 @@
 # Project traffic-lights
 
-This is a hobby application that took it's inspiration from the lights you see next to an exam room (green, yellow, red). The idea is to provide a platform for service providers that take on clients to let people know if they have capacity, if they might have capacity (can be contacted) or they are fully booked. Users should be able to list service providers in a specific location, for a specific service.
+This is a hobby application that has taken it's inspiration from the lights you see next to an exam room (green, yellow, red). The idea is to provide a platform for service providers that take on clients to let people know if they have capacity, if they might have capacity (can be contacted) or they are fully booked. Users should be able to list service providers in a specific location, for a specific service.
 
 I also wanted to build something without project management, planning, upfront design or cloud services with Go.
 
 > [!WARNING]  
-> I am continuously refactoring this application as I discover new things. I've already gone through multiple different iterations. I've done some splitting of responsibilities using services and repositories. I've thrown stuff around to different packages. I switched from HTTP to gRPC. I moved everything under /api to maybe use a monorepo approach with a separate UI application. Just be warned, that things will move around and I will continue to improve this as I find time to work on it.
+> This application does not really contain any useful functionality. I am incrementally adding feature as I have time to develop the app.
+> I am also continuously refactoring this application as I discover new things. I've already gone through multiple different iterations. I've done some splitting of responsibilities using services and repositories, while also moving them to a core directory. I've thrown stuff around to different packages. I switched from HTTP to gRPC. I moved everything under /api to maybe use a monorepo approach with a separate UI application. Just be warned, that things will move around and I will continue to improve this as I find time to work on it.
 
 ## Motivation
 
