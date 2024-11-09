@@ -98,7 +98,7 @@ func (r *UserRepository) SaveRefreshToken(refreshTokenEntry *models.RefreshToken
 
 // Revoke all refresh tokens by purging them from the sessions table
 func (r *UserRepository) RevokeRefreshToken(token string, userId int) error {
-	sqlStatement := `DELETE FROM sessions WHERE token = $1 AND user_id = $1;`
+	sqlStatement := `DELETE FROM sessions WHERE token = $1 AND user_id = $2;`
 	_, err := r.db.Handle().Exec(sqlStatement, token, userId)
 
 	if err != nil {
@@ -126,7 +126,7 @@ func (r *UserRepository) GetRefreshToken(token string, userId int) (*models.Refr
 
 	err := r.db.Handle().
 		QueryRow("select token, expires, user_id from sessions where token = $1 AND user_id = $2", token, userId).
-		Scan(&userId, &refreshToken, &expiresAt, &id)
+		Scan(&refreshToken, &expiresAt, &userId)
 
 	if err != nil {
 		return nil, err

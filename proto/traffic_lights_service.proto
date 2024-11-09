@@ -16,7 +16,7 @@ service TrafficLightsService {
     rpc RegisterUser(RegistrationRequest) returns (google.protobuf.Empty) {}
     rpc RefreshToken(RefreshTokenRequest) returns (TokenResponse) {}
     rpc RevokeRefreshToken(RefreshTokenRequest) returns (google.protobuf.Empty) {}
-    rpc RevokeAllRefreshToken(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+    rpc RevokeAllRefreshTokens(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }
 
 message RefreshTokenRequest {

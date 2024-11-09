@@ -161,7 +161,17 @@ func (s *UserService) RefreshTokens(refreshToken string, userId int) (*auth.Issu
 }
 
 func (s *UserService) RevokeRefreshToken(refreshToken string, userId int) error {
-	err := s.repository.RevokeRefreshToken(refreshToken, userId)
+	// Check that the refresh token exists
+	_, err := s.repository.GetRefreshToken(refreshToken, userId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return core.NewError(core.ErrNotFound, err)
+		}
+
+		return core.NewError(core.ErrInternal, err)
+	}
+
+	err = s.repository.RevokeRefreshToken(refreshToken, userId)
 
 	if err != nil {
 		// log here as we also run this call on a goroutine to revoke refresh tokens from storage

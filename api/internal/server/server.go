@@ -40,7 +40,7 @@ func New(config *config.Config, logger *log.Logger) *grpc.Server {
 	}
 
 	// Authentication middleware. Skip Login and Register methods
-	authInterceptor, err := interceptor.NewAuthInterceptor(auth, logger, []string{"Register", "Login"})
+	authInterceptor, err := interceptor.NewAuthInterceptor(auth, logger, []string{"GetToken", "RegisterUser"})
 	if err != nil {
 		logger.Fatalf("failed to create auth interceptor: %v", err)
 	}
@@ -84,17 +84,20 @@ func (s *Server) FromError(err error) ServerError {
 	var serviceError core.Error
 
 	if errors.As(err, &serviceError) {
-		serverError.Message = serviceError.ApplicationError().Error()
 		serviceError := serviceError.ServiceError()
+		serverError.Message = serviceError.Error()
 
 		switch serviceError {
 		case core.ErrRevokedRefreshToken:
+			serverError.Code = codes.Unauthenticated
 		case core.ErrExpiredRefreshToken:
 			serverError.Code = codes.Unauthenticated
 		case core.ErrUserNotFound:
 			serverError.Code = codes.Unauthenticated
 		case core.ErrUserAlreadyExists:
 			serverError.Code = codes.AlreadyExists
+		case core.ErrNotFound:
+			serverError.Code = codes.NotFound
 		case core.ErrInvalidPassword:
 			serverError.Code = codes.Unauthenticated
 

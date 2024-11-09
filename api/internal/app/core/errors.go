@@ -3,9 +3,10 @@ package core
 import "errors"
 
 var (
-	ErrRevokedRefreshToken = errors.New("refresh token has been revoked")
+	ErrRevokedRefreshToken = errors.New("refresh token is revoked")
 	ErrExpiredRefreshToken = errors.New("refresh token has expired")
 	ErrInternal            = errors.New("internal server error")
+	ErrNotFound            = errors.New("resource not found")
 	ErrUserAlreadyExists   = errors.New("")
 	// User not found. Do not expose that to caller.
 	ErrUserNotFound = errors.New("")

@@ -104,7 +104,7 @@ func (s *Server) RevokeRefreshToken(ctx context.Context, in *pb.RefreshTokenRequ
 }
 
 // Method to allow users to revoke all refresh tokens that are active
-func (s *Server) RevokeAllRefreshTokens(ctx context.Context) (*emptypb.Empty, error) {
+func (s *Server) RevokeAllRefreshTokens(ctx context.Context, in *emptypb.Empty) (*emptypb.Empty, error) {
 	userId := ctx.Value(interceptor.UserIdKey).(string)
 	if userId == "" {
 		return nil, status.Error(codes.FailedPrecondition, "user ID was not determined")
