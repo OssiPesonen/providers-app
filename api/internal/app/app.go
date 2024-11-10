@@ -11,7 +11,8 @@ import (
 	"github.com/ossipesonen/go-traffic-lights/pkg/database"
 )
 
-// Define the API to components
+// Define the APIs for components
+
 type UserService interface {
 	// Authenticates a user using provided email and password.
 	// Returns the user resource if successful

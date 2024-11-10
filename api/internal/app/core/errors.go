@@ -3,15 +3,21 @@ package core
 import "errors"
 
 var (
+	// Refresh token was used to gain new access token, but it is already revoked
 	ErrRevokedRefreshToken = errors.New("refresh token is revoked")
+	// Refresh token was used to gain new access token, but it is expired
 	ErrExpiredRefreshToken = errors.New("refresh token has expired")
-	ErrInternal            = errors.New("internal server error")
-	ErrNotFound            = errors.New("resource not found")
-	ErrUserAlreadyExists   = errors.New("")
-	// User not found. Do not expose that to caller.
-	ErrUserNotFound = errors.New("")
-	// Invalid credentials. Do not expose that to caller.
-	ErrInvalidPassword = errors.New("")
+	// Error cannot be safely interpreted
+	ErrInternal = errors.New("internal server error")
+	// Entity / Resource is not found
+	ErrNotFound = errors.New("resource not found")
+	// Someone attempted to register a user account,
+	//but the user (with email) already exists in the system
+	ErrUserAlreadyExists = errors.New("user already exists")
+	// Someone attempted to authenticate with an email that is not found
+	ErrUserNotFound = errors.New("user not found")
+	// User entered an invalid password
+	ErrInvalidPassword = errors.New("invalid password")
 )
 
 type Error struct {

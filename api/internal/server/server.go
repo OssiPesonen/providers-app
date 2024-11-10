@@ -94,12 +94,18 @@ func (s *Server) FromError(err error) ServerError {
 			serverError.Code = codes.Unauthenticated
 		case core.ErrUserNotFound:
 			serverError.Code = codes.Unauthenticated
+			// Do not expose message to callers
+			serverError.Message = ""
 		case core.ErrUserAlreadyExists:
 			serverError.Code = codes.AlreadyExists
+			// Do not expose message to callers
+			serverError.Message = ""
 		case core.ErrNotFound:
 			serverError.Code = codes.NotFound
 		case core.ErrInvalidPassword:
 			serverError.Code = codes.Unauthenticated
+			// Do not expose message to callers
+			serverError.Message = ""
 
 		default:
 			// Uncontrolled and unidentified error types are internal errors
