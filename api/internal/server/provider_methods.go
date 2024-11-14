@@ -2,9 +2,10 @@ package server
 
 import (
 	"context"
-	"database/sql"
 
+	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
 	pb "github.com/ossipesonen/go-traffic-lights/proto"
+	"github.com/upper/db/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -40,7 +41,7 @@ func (s *Server) ReadProvider(ctx context.Context, in *pb.ReadProviderRequest) (
 	provider, err := s.App.Services.Provider.GetProvider(int(id))
 
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db.ErrNoMoreRows {
 			return nil, status.Error(codes.NotFound, "")
 		} else {
 			// Log server error
@@ -55,4 +56,19 @@ func (s *Server) ReadProvider(ctx context.Context, in *pb.ReadProviderRequest) (
 		Id:   int32(provider.Id),
 		Name: provider.Name,
 	}, nil
+}
+
+func (s *Server) CreateProvider(ctx context.Context, in *pb.CreateProviderRequest) (*pb.CreateProviderResponse, error) {
+	providerId, err := s.App.Services.Provider.CreateProvider(&models.Provider{
+		Name:   in.Name,
+		City:   in.City,
+		Region: in.Region,
+	})
+
+	if err != nil {
+		e := s.FromError(err)
+		return nil, status.Error(e.Code, e.Message)
+	}
+
+	return &pb.CreateProviderResponse{Id: int32(providerId)}, nil
 }

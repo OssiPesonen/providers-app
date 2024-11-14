@@ -4,6 +4,7 @@ This is a list of things and technologies I wish to try out:
 |---------------------------------|---------------------|
 | gRPC                            | :white_check_mark:  |
 | Authentication                  | :white_check_mark:  |
+| Tests (and transition to TDD)   | :hammer:            |
 | Monorepo setup (new tool)       |                     |
 | Front-end with maybe Svelte (?) |                     |
 

@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	TrafficLightsService_ListProviders_FullMethodName          = "/proto.TrafficLightsService/ListProviders"
 	TrafficLightsService_ReadProvider_FullMethodName           = "/proto.TrafficLightsService/ReadProvider"
+	TrafficLightsService_CreateProvider_FullMethodName         = "/proto.TrafficLightsService/CreateProvider"
 	TrafficLightsService_GetToken_FullMethodName               = "/proto.TrafficLightsService/GetToken"
 	TrafficLightsService_RegisterUser_FullMethodName           = "/proto.TrafficLightsService/RegisterUser"
 	TrafficLightsService_RefreshToken_FullMethodName           = "/proto.TrafficLightsService/RefreshToken"
@@ -36,6 +37,7 @@ type TrafficLightsServiceClient interface {
 	// Providers
 	ListProviders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProviderResponse, error)
 	ReadProvider(ctx context.Context, in *ReadProviderRequest, opts ...grpc.CallOption) (*ReadProviderResponse, error)
+	CreateProvider(ctx context.Context, in *CreateProviderRequest, opts ...grpc.CallOption) (*CreateProviderResponse, error)
 	// Users
 	GetToken(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*TokenResponse, error)
 	RegisterUser(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -66,6 +68,16 @@ func (c *trafficLightsServiceClient) ReadProvider(ctx context.Context, in *ReadP
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ReadProviderResponse)
 	err := c.cc.Invoke(ctx, TrafficLightsService_ReadProvider_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *trafficLightsServiceClient) CreateProvider(ctx context.Context, in *CreateProviderRequest, opts ...grpc.CallOption) (*CreateProviderResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateProviderResponse)
+	err := c.cc.Invoke(ctx, TrafficLightsService_CreateProvider_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -129,6 +141,7 @@ type TrafficLightsServiceServer interface {
 	// Providers
 	ListProviders(context.Context, *emptypb.Empty) (*ListProviderResponse, error)
 	ReadProvider(context.Context, *ReadProviderRequest) (*ReadProviderResponse, error)
+	CreateProvider(context.Context, *CreateProviderRequest) (*CreateProviderResponse, error)
 	// Users
 	GetToken(context.Context, *LoginRequest) (*TokenResponse, error)
 	RegisterUser(context.Context, *RegistrationRequest) (*emptypb.Empty, error)
@@ -150,6 +163,9 @@ func (UnimplementedTrafficLightsServiceServer) ListProviders(context.Context, *e
 }
 func (UnimplementedTrafficLightsServiceServer) ReadProvider(context.Context, *ReadProviderRequest) (*ReadProviderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadProvider not implemented")
+}
+func (UnimplementedTrafficLightsServiceServer) CreateProvider(context.Context, *CreateProviderRequest) (*CreateProviderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateProvider not implemented")
 }
 func (UnimplementedTrafficLightsServiceServer) GetToken(context.Context, *LoginRequest) (*TokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
@@ -219,6 +235,24 @@ func _TrafficLightsService_ReadProvider_Handler(srv interface{}, ctx context.Con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TrafficLightsServiceServer).ReadProvider(ctx, req.(*ReadProviderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TrafficLightsService_CreateProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateProviderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TrafficLightsServiceServer).CreateProvider(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TrafficLightsService_CreateProvider_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TrafficLightsServiceServer).CreateProvider(ctx, req.(*CreateProviderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -327,6 +361,10 @@ var TrafficLightsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReadProvider",
 			Handler:    _TrafficLightsService_ReadProvider_Handler,
+		},
+		{
+			MethodName: "CreateProvider",
+			Handler:    _TrafficLightsService_CreateProvider_Handler,
 		},
 		{
 			MethodName: "GetToken",

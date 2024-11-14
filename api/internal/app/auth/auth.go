@@ -37,7 +37,7 @@ func New(secret string) (*Auth, error) {
 func (s *Auth) IssueToken(userID int) (*IssuedTokens, error) {
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": strconv.Itoa(userID),                    // RFC defines "sub" should be string
-		"iss": "traffic-lights",                        // Todo: do not hard code this
+		"iss": "traffic-lights",                        // Todo: this should not be hard coded
 		"exp": time.Now().Add(time.Minute * 60).Unix(), // 60 min
 	}, nil)
 
@@ -82,7 +82,7 @@ func (s *Auth) ValidateToken(token string) (string, error) {
 	return "", ErrInvalidToken
 }
 
-func GenerateRandomBytes(n int) ([]byte, error) {
+func generateRandomBytes(n int) ([]byte, error) {
 	b := make([]byte, n)
 	_, err := rand.Read(b)
 	// Note that err == nil only if we read len(b) bytes.
@@ -96,6 +96,6 @@ func GenerateRandomBytes(n int) ([]byte, error) {
 // Returns a URL-safe, base64 encoded
 // securely generated random string.
 func GenerateRandomString(s int) (string, error) {
-	b, err := GenerateRandomBytes(s)
+	b, err := generateRandomBytes(s)
 	return base64.URLEncoding.EncodeToString(b), err
 }

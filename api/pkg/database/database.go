@@ -1,27 +1,23 @@
 package database
 
 import (
-	"context"
-	"database/sql"
 	"fmt"
 	"log"
-	"os"
-	"strconv"
-	"time"
 
-	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/upper/db/v4"
+	"github.com/upper/db/v4/adapter/postgresql"
 )
 
 type Database interface {
 	Health() map[string]string
 	Close() error
 	// Returns the connection handle to enable access to database
-	Handle() *sql.DB
+	Handle() db.Session
 }
 
 type connection struct {
-	db     *sql.DB
+	db     db.Session
 	logger *log.Logger
 }
 
@@ -44,17 +40,14 @@ func New(config *DBConfig, logger *log.Logger) Database {
 		return dbInstance
 	}
 
-	connStr := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s",
-		config.Username,
-		config.Password,
-		config.Host,
-		config.Port,
-		config.Database,
-		config.Schema,
-	)
+	var settings = postgresql.ConnectionURL{
+		Host:     config.Host,
+		Database: config.Database,
+		User:     config.Username,
+		Password: config.Password,
+	}
 
-	db, err := sql.Open("pgx", connStr)
+	db, err := postgresql.Open(settings)
 
 	if err != nil {
 		log.Fatal(err)
@@ -68,20 +61,17 @@ func New(config *DBConfig, logger *log.Logger) Database {
 	return dbInstance
 }
 
-func (conn *connection) Handle() *sql.DB {
+func (conn *connection) Handle() db.Session {
 	return conn.db
 }
 
 // Health checks the health of the database connection by pinging the database.
 // It returns a map with keys indicating various health statistics.
 func (conn *connection) Health() map[string]string {
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()
-
 	info := make(map[string]string)
 
 	// Ping the database
-	err := conn.db.PingContext(ctx)
+	err := conn.db.Ping()
 
 	if err != nil {
 		info["status"] = "down"
@@ -92,39 +82,6 @@ func (conn *connection) Health() map[string]string {
 
 	// Database is up
 	info["status"] = "up"
-
-	isDebug := os.Getenv("APP_DEBUG")
-
-	// Don't expose details unless APP_DEBUG enabled
-	if isDebug != "" {
-		// Get database stats (like open connections, in use, idle, etc.)
-		dbStats := conn.db.Stats()
-		info["open_connections"] = strconv.Itoa(dbStats.OpenConnections)
-		info["in_use"] = strconv.Itoa(dbStats.InUse)
-		info["idle"] = strconv.Itoa(dbStats.Idle)
-		info["wait_count"] = strconv.FormatInt(dbStats.WaitCount, 10)
-		info["wait_duration"] = dbStats.WaitDuration.String()
-		info["max_idle_closed"] = strconv.FormatInt(dbStats.MaxIdleClosed, 10)
-		info["max_lifetime_closed"] = strconv.FormatInt(dbStats.MaxLifetimeClosed, 10)
-
-		// Evaluate stats to provide a health message
-		if dbStats.OpenConnections > 40 { // Assuming 50 is the max for this example
-			info["message"] = "The database is experiencing heavy load."
-		}
-
-		if dbStats.WaitCount > 1000 {
-			info["message"] = "The database has a high number of wait events, indicating potential bottlenecks."
-		}
-
-		if dbStats.MaxIdleClosed > int64(dbStats.OpenConnections)/2 {
-			info["message"] = "Many idle connections are being closed, consider revising the connection pool settings."
-		}
-
-		if dbStats.MaxLifetimeClosed > int64(dbStats.OpenConnections)/2 {
-			info["message"] = "Many connections are being closed due to max lifetime, consider increasing max lifetime or revising the connection usage pattern."
-		}
-	}
-
 	return info
 }
 

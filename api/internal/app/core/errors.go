@@ -16,6 +16,8 @@ var (
 	ErrUserAlreadyExists = errors.New("user already exists")
 	// Someone attempted to authenticate with an email that is not found
 	ErrUserNotFound = errors.New("user not found")
+	// Name + City collision
+	ErrProviderAlreadyExists = errors.New("a provider with this name already exists for the city")
 	// User entered an invalid password
 	ErrInvalidPassword = errors.New("invalid password")
 )

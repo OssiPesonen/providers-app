@@ -60,7 +60,8 @@ func (a *Password) GenerateHash(password, salt []byte) (*HashSalt, error) {
 	// If salt is not provided generate a salt of
 	// the configured salt length.
 	if len(salt) == 0 {
-		salt, err = randomSecret(a.saltLen)
+		saltLength := a.saltLen
+		salt, err = randomSecret(saltLength)
 	}
 
 	if err != nil {

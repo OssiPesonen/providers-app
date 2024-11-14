@@ -29,7 +29,6 @@ type Server struct {
 // Set up gRPC server to listen for method calls
 func New(config *config.Config, logger *log.Logger) *grpc.Server {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Server.Port))
-
 	if err != nil {
 		logger.Fatalf("failed to listen: %v", err)
 	}
@@ -100,6 +99,8 @@ func (s *Server) FromError(err error) ServerError {
 			serverError.Code = codes.AlreadyExists
 			// Do not expose message to callers
 			serverError.Message = ""
+		case core.ErrProviderAlreadyExists:
+			serverError.Code = codes.AlreadyExists
 		case core.ErrNotFound:
 			serverError.Code = codes.NotFound
 		case core.ErrInvalidPassword:

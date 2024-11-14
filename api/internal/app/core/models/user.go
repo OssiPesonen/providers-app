@@ -3,18 +3,18 @@ package models
 import "time"
 
 type User struct {
-	Id       int
-	Username string
-	Email    string
+	Id       int    `db:"id,omitempty"`
+	Username string `db:"username"`
+	Email    string `db:"email"`
 	// Hashed
-	Password string
-	Salt     string
+	Password string `db:"password"`
+	Salt     string `db:"salt"`
 }
 
 type RefreshTokenEntry struct {
-	RefreshToken string
-	Expires      time.Time
-	UserId       int
+	RefreshToken string    `db:"token"`
+	Expires      time.Time `db:"expires"`
+	UserId       int       `db:"user_id"`
 }
 
 type UserCredentials struct {

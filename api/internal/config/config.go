@@ -47,7 +47,6 @@ func New() *Config {
 		Username: os.Getenv("APP_DB_USERNAME"),
 		Port:     os.Getenv("APP_DB_PORT"),
 		Host:     os.Getenv("APP_DB_HOST"),
-		Schema:   os.Getenv("APP_DB_SCHEMA"),
 	}
 
 	return &Config{

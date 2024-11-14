@@ -39,6 +39,8 @@ type ProviderService interface {
 	// Returns the provider or error. Error can be sql.ErrnoRows,
 	// which indicates no resource found
 	GetProvider(id int) (*models.Provider, error)
+	// Create a new provider in the system
+	CreateProvider(provider *models.Provider) (int, error)
 }
 
 type Services struct {

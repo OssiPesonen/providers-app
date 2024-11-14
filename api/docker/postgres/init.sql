@@ -1,21 +1,26 @@
 -- providers table
+-- id should be bigserial
 CREATE TABLE 
 "public"."providers" (
-    "id" serial not null,
+    "id" bigserial not null,
     "name" varchar(255) not null,
+    "city" varchar(255) not null,
+    "region" varchar(255) not null,
+    "line_of_business" varchar(255) not null,
+    "keywords" varchar(255) not null,
     constraint "providers_pkey" primary key ("id")
 );
 
-insert into "public"."providers" ("id", "name") values (1, 'Healthy Personal Training');
-insert into "public"."providers" ("id", "name") values (2, 'Healthy Yoga Instructor');
-insert into "public"."providers" ("id", "name") values (3, 'Healthy Agile Coaching');
-
+insert into "public"."providers" ("city", "id", "keywords", "line_of_business", "name", "region") values 
+('Helsinki', 1, 'personal,training,gym,wellness,health', 'Health and Wellness', 'Healthy Personal Training', 'Uusimaa'), 
+('Stockholm', 2, 'yoga,wellness,lifestyle,health', 'Health and Wellness', 'Healthy Yoga Instructor', 'Stockholm'), 
+('Oslo', 3, 'agile,coaching,coach,software,development,teams', 'Information technology', 'Healthy Agile Coaching', 'Akershus');
 
 -- end of providers table
 
 -- users table 
 
-create table
+CREATE TABLE
   "public"."users" (
     "id" serial not null,
     "username" varchar(255) not null default NOW(),
@@ -33,4 +38,12 @@ CREATE TABLE
     "expires" timestamp without time zone not null default now(),
     "user_id" integer not null,
     constraint "sessions_pkey" primary key ("token","user_id")
+);
+
+-- line of business
+
+CREATE TABLE
+  "public"."lines_of_business" (
+    "id" serial not null,
+    "title" varchar(255) not null default NOW(),
 );

@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"log"
-	"time"
 
 	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
 	"github.com/ossipesonen/go-traffic-lights/internal/app/core/services"
@@ -27,8 +26,12 @@ func NewUserRepository(db database.Database, logger *log.Logger) *UserRepository
 }
 
 func (r *UserRepository) Add(user *models.User) error {
-	sqlStatement := `INSERT INTO users (email, username, password, salt) VALUES ($1, $2, $3, $4);`
-	_, err := r.db.Handle().Exec(sqlStatement, user.Email, user.Username, user.Password, user.Salt)
+	_, err := r.db.Handle().SQL().InsertInto("user").Values(models.User{
+		Email:    user.Email,
+		Username: user.Username,
+		Password: user.Password,
+		Salt:     user.Salt,
+	}).Exec()
 
 	if err != nil {
 		return err
@@ -38,57 +41,29 @@ func (r *UserRepository) Add(user *models.User) error {
 }
 
 func (r *UserRepository) Find(email string) (*models.User, error) {
-	var userId int
-	var userEmail string
-	var username string
-	var userPassword string
-	var userPasswordSalt string
+	var user = &models.User{}
 
-	err := r.db.Handle().
-		QueryRow("select id, username, email, password, salt from users where email = $1", email).
-		Scan(&userId, &username, &userEmail, &userPassword, &userPasswordSalt)
-
-	if err != nil {
+	q := r.db.Handle().SQL().Select("id", "username", "email", "password", "salt").From("users").Where("email = ?", email)
+	if err := q.One(&user); err != nil {
 		return nil, err
 	}
 
-	return &models.User{
-		Id:       userId,
-		Username: username,
-		Email:    userEmail,
-		Password: userPassword,
-		Salt:     userPasswordSalt,
-	}, nil
+	return user, nil
 }
 
 func (r *UserRepository) Read(id int) (*models.User, error) {
-	var userId int
-	var userEmail string
-	var username string
-	var userPassword string
-	var userPasswordSalt string
+	var user = &models.User{}
 
-	err := r.db.Handle().
-		QueryRow("select id, username, email, password, salt from users where id = $1", id).
-		Scan(&userId, &username, &userEmail, &userPassword, &userPasswordSalt)
-
-	if err != nil {
+	q := r.db.Handle().SQL().Select("id", "username", "email", "password", "salt").From("users").Where("id = ?", id)
+	if err := q.One(user); err != nil {
 		return nil, err
 	}
 
-	return &models.User{
-		Id:       id,
-		Username: username,
-		Email:    userEmail,
-		Password: userPassword,
-		Salt:     userPasswordSalt,
-	}, nil
+	return user, nil
 }
 
 func (r *UserRepository) SaveRefreshToken(refreshTokenEntry *models.RefreshTokenEntry) error {
-	sqlStatement := `INSERT INTO sessions (token, user_id, expires) VALUES ($1, $2, $3);`
-	_, err := r.db.Handle().Exec(sqlStatement, refreshTokenEntry.RefreshToken, refreshTokenEntry.UserId, refreshTokenEntry.Expires)
-
+	_, err := r.db.Handle().SQL().InsertInto("sessions").Values(refreshTokenEntry).Exec()
 	if err != nil {
 		return err
 	}
@@ -98,9 +73,9 @@ func (r *UserRepository) SaveRefreshToken(refreshTokenEntry *models.RefreshToken
 
 // Revoke all refresh tokens by purging them from the sessions table
 func (r *UserRepository) RevokeRefreshToken(token string, userId int) error {
-	sqlStatement := `DELETE FROM sessions WHERE token = $1 AND user_id = $2;`
-	_, err := r.db.Handle().Exec(sqlStatement, token, userId)
+	q := r.db.Handle().SQL().DeleteFrom("sessions").Where("token = ?", token).And("user_id = ?", userId)
 
+	_, err := q.Exec()
 	if err != nil {
 		return err
 	}
@@ -109,9 +84,9 @@ func (r *UserRepository) RevokeRefreshToken(token string, userId int) error {
 }
 
 func (r *UserRepository) RevokeAllRefreshTokens(userId int) error {
-	sqlStatement := `DELETE FROM sessions WHERE user_id = $1;`
-	_, err := r.db.Handle().Exec(sqlStatement, userId)
+	q := r.db.Handle().SQL().DeleteFrom("sessions").Where("user_id = ?", userId)
 
+	_, err := q.Exec()
 	if err != nil {
 		return err
 	}
@@ -120,21 +95,12 @@ func (r *UserRepository) RevokeAllRefreshTokens(userId int) error {
 }
 
 func (r *UserRepository) GetRefreshToken(token string, userId int) (*models.RefreshTokenEntry, error) {
-	var refreshToken string
-	var expiresAt time.Time
-	var id int
+	var refreshToken = &models.RefreshTokenEntry{}
 
-	err := r.db.Handle().
-		QueryRow("select token, expires, user_id from sessions where token = $1 AND user_id = $2", token, userId).
-		Scan(&refreshToken, &expiresAt, &userId)
-
-	if err != nil {
+	q := r.db.Handle().SQL().Select("token", "expires", "user_id").From("sessions").Where("token = ?", token).And("user_id = ?", userId)
+	if err := q.One(&refreshToken); err != nil {
 		return nil, err
 	}
 
-	return &models.RefreshTokenEntry{
-		RefreshToken: refreshToken,
-		UserId:       id,
-		Expires:      expiresAt,
-	}, nil
+	return refreshToken, nil
 }

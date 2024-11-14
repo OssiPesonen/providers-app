@@ -1,7 +1,6 @@
 package services
 
 import (
-	"database/sql"
 	"errors"
 	"log"
 	"time"
@@ -9,6 +8,7 @@ import (
 	"github.com/ossipesonen/go-traffic-lights/internal/app/auth"
 	"github.com/ossipesonen/go-traffic-lights/internal/app/core"
 	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
+	"github.com/upper/db/v4"
 )
 
 // Define repository interface that this service needs
@@ -133,7 +133,7 @@ func (s *UserService) RefreshTokens(refreshToken string, userId int) (*auth.Issu
 	// Ensure token is still valid
 	token, err := s.repository.GetRefreshToken(refreshToken, userId)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db.ErrNoMoreRows {
 			return nil, core.NewError(core.ErrRevokedRefreshToken, err)
 		}
 
@@ -164,7 +164,7 @@ func (s *UserService) RevokeRefreshToken(refreshToken string, userId int) error 
 	// Check that the refresh token exists
 	_, err := s.repository.GetRefreshToken(refreshToken, userId)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db.ErrNoMoreRows {
 			return core.NewError(core.ErrNotFound, err)
 		}
 

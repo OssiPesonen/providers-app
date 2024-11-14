@@ -10,6 +10,7 @@ service TrafficLightsService {
     // Providers
     rpc ListProviders (google.protobuf.Empty) returns (ListProviderResponse) {}
     rpc ReadProvider (ReadProviderRequest) returns (ReadProviderResponse) {}
+    rpc CreateProvider (CreateProviderRequest) returns (CreateProviderResponse) {}
 
     // Users
     rpc GetToken(LoginRequest) returns (TokenResponse) {}
@@ -19,6 +20,35 @@ service TrafficLightsService {
     rpc RevokeAllRefreshTokens(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }
 
+// Provider messages
+message ReadProviderRequest {
+    int32 id = 1;
+}
+
+message ReadProviderResponse {
+    int32 id = 1;
+    string name = 2;
+    string city = 3;
+    string region = 4;
+    string line_of_business = 5;
+}
+
+message CreateProviderRequest {
+    string name = 2;
+    string city = 3;
+    string region = 4;
+    string line_of_business = 5;
+}
+
+message CreateProviderResponse {
+    int32 id = 1;
+}
+
+message ListProviderResponse {
+    repeated ReadProviderResponse providers = 1;
+}
+
+// User messages
 message RefreshTokenRequest {
     string refresh_token = 1;
 }
@@ -40,17 +70,4 @@ message TokenResponse {
     string token_type = 3;        
     optional string refresh_token = 4;
     optional string scope = 5;
-}
-
-message ReadProviderRequest {
-    int32 id = 1;
-}
-
-message ReadProviderResponse {
-    int32 id = 1;
-    string name = 2;
-}
-
-message ListProviderResponse {
-    repeated ReadProviderResponse providers = 1;
 }
