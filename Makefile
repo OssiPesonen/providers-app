@@ -15,7 +15,7 @@ dev-api:
 	@cd api; go run cmd/main.go
 
 # Generate protocol buffer files for Go (API)
-gen-grpc:
+gen-proto:
 	protoc \
 	--go_out=api \
 	--go_opt=paths=source_relative \
