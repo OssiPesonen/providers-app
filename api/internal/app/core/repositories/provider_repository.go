@@ -40,7 +40,7 @@ func (p *ProviderRepository) List() (*[]models.Provider, error) {
 func (p *ProviderRepository) Read(id int) (*models.Provider, error) {
 	provider := &models.Provider{}
 
-	q := p.db.Handle().SQL().Select("id", "name", "city", "region", "line_of_business").From("providers")
+	q := p.db.Handle().SQL().Select("id", "name", "city", "region", "line_of_business").From("providers").Where("id = ?", id)
 	if err := q.One(&provider); err != nil {
 		return nil, err
 	}
