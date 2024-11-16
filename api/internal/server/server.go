@@ -78,6 +78,8 @@ type ServerError struct {
 	Code    codes.Code
 }
 
+// Map errors from core services to server that gets outputted to client
+// we want to hide certain errors to not expose certain details
 func (s *Server) FromError(err error) ServerError {
 	var serverError ServerError
 	var serviceError core.Error

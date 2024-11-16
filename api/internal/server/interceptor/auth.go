@@ -42,7 +42,7 @@ func (a *AuthInterceptor) UnaryAuthMiddleware(ctx context.Context, req any, info
 	// Grab metadata for authorization key
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return nil, status.Error(codes.Unauthenticated, "metadata is not provided")
+		return nil, status.Error(codes.Unauthenticated, "Metadata has not been provided")
 	}
 
 	// Skip defined routes
@@ -59,7 +59,7 @@ func (a *AuthInterceptor) UnaryAuthMiddleware(ctx context.Context, req any, info
 	// extract token from authorization key
 	token := md["authorization"]
 	if len(token) == 0 {
-		return nil, status.Error(codes.Unauthenticated, "access token is not provided")
+		return nil, status.Error(codes.Unauthenticated, "Access token is not provided in authorization metadata")
 	}
 
 	// validate token and retrieve the userID
