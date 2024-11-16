@@ -62,8 +62,13 @@ func (a *AuthInterceptor) UnaryAuthMiddleware(ctx context.Context, req any, info
 		return nil, status.Error(codes.Unauthenticated, "Access token is not provided in authorization metadata")
 	}
 
+	t, found := strings.CutPrefix(token[0], "Bearer ")
+	if !found {
+		return nil, status.Error(codes.Unauthenticated, "Bearer token is not provide in the authorization metadata")
+	}
+
 	// validate token and retrieve the userID
-	userID, err := a.validator.ValidateToken(token[0])
+	userID, err := a.validator.ValidateToken(t)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "Invalid token. It might be malformed or expired.")
 	}

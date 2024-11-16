@@ -12,8 +12,16 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-type Empty struct{}
-type MockValidator struct{}
+var (
+	logger    = log.New(os.Stdout, "http: ", log.LstdFlags)
+	req       = &Empty{}
+	validator = NewMockValidator()
+)
+
+type (
+	Empty         struct{}
+	MockValidator struct{}
+)
 
 func NewMockValidator() *MockValidator {
 	return &MockValidator{}
@@ -23,12 +31,9 @@ func (m *MockValidator) ValidateToken(token string) (string, error) {
 	if token != "valid-token" {
 		return "", errors.New("invalid token")
 	}
+
 	return "1234", nil
 }
-
-var logger = log.New(os.Stdout, "http: ", log.LstdFlags)
-var req = &Empty{}
-var validator = NewMockValidator()
 
 func TestNewAuthInterceptor(t *testing.T) {
 	_, err := NewAuthInterceptor(nil, logger, []string{})
@@ -50,7 +55,6 @@ func TestUnarityAuthMiddlewareWithoutMetadata(t *testing.T) {
 
 	interceptor, err := NewAuthInterceptor(validator, logger, []string{})
 	assert.Nil(t, err)
-	assert.NotNil(t, interceptor)
 
 	_, err = interceptor.UnaryAuthMiddleware(ctx, req, info, mockHandler)
 
@@ -74,7 +78,6 @@ func TestUnarityAuthMiddlewareWithWhitelistedRoute(t *testing.T) {
 
 	interceptor, err := NewAuthInterceptor(validator, logger, []string{"hello-world"})
 	assert.Nil(t, err)
-	assert.NotNil(t, interceptor)
 
 	// Should call handler without token
 	response, err := interceptor.UnaryAuthMiddleware(ctx, req, info, mockHandler)
@@ -98,7 +101,6 @@ func TestUnarityAuthMiddlewareNoAccessToken(t *testing.T) {
 
 	interceptor, err := NewAuthInterceptor(validator, logger, []string{})
 	assert.Nil(t, err)
-	assert.NotNil(t, interceptor)
 
 	// Should call handler
 	response, err := interceptor.UnaryAuthMiddleware(ctx, req, info, mockHandler)
@@ -110,9 +112,9 @@ func TestUnarityAuthMiddlewareNoAccessToken(t *testing.T) {
 }
 
 func TestUnarityAuthMiddlewareInvalidToken(t *testing.T) {
-	token := []string{"invalid-token"}
+	token := []string{"Bearer invalid-token"}
 
-	ctx := metadata.NewIncomingContext(context.Background(), map[string][]string{"authorization": token})
+	ctx := metadata.NewIncomingContext(context.Background(), map[string][]string{"Authorization": token})
 	info := &grpc.UnaryServerInfo{
 		FullMethod: "foo-bar",
 	}
@@ -125,7 +127,6 @@ func TestUnarityAuthMiddlewareInvalidToken(t *testing.T) {
 
 	interceptor, err := NewAuthInterceptor(validator, logger, []string{})
 	assert.Nil(t, err)
-	assert.NotNil(t, interceptor)
 
 	// Should call handler
 	response, err := interceptor.UnaryAuthMiddleware(ctx, req, info, mockHandler)
@@ -137,7 +138,7 @@ func TestUnarityAuthMiddlewareInvalidToken(t *testing.T) {
 }
 
 func TestUnarityAuthMiddlewareValidToken(t *testing.T) {
-	token := []string{"valid-token"}
+	token := []string{"Bearer valid-token"}
 
 	ctx := metadata.NewIncomingContext(context.Background(), map[string][]string{"authorization": token})
 	info := &grpc.UnaryServerInfo{
@@ -153,7 +154,6 @@ func TestUnarityAuthMiddlewareValidToken(t *testing.T) {
 
 	interceptor, err := NewAuthInterceptor(validator, logger, []string{})
 	assert.Nil(t, err)
-	assert.NotNil(t, interceptor)
 
 	// Should call handler
 	response, err := interceptor.UnaryAuthMiddleware(ctx, req, info, mockHandler)
