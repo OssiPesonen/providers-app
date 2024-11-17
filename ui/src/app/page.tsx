@@ -1,112 +1,107 @@
-"use client"
-import Image from "next/image";
+"use client";
 import styles from "./page.module.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { TrafficLightsServiceClient } from "@/proto/Traffic_lights_serviceServiceClientPb";
+import google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb.js";
 import { LoginRequest } from "@/proto/traffic_lights_service_pb";
 
-export default function Home() {
-  useEffect(() => {
-    async function fetchData() {
-      const client = new TrafficLightsServiceClient('http://localhost:8080');
-      const req = new LoginRequest();
-      req.setEmail('demo@example.com');
-      req.setPassword('password1234');
-      const resp = await client.getToken(req, {});
-      console.debug(resp);
-    };
+type Provider = {
+  id: number;
+  name: string;
+  region: string;
+  city: string;
+  lob: string;
+};
 
-    fetchData();
+export default function Home() {
+  const [isUnauthenticated, setIsUnauthenticated] = useState<
+    boolean | undefined
+  >(undefined);
+  const [providers, setProviders] = useState<Provider[]>([]);
+
+  const client = new TrafficLightsServiceClient("http://localhost:8080");
+
+  const login = () => {
+    if (localStorage.getItem("access-token") !== null) {
+      return;
+    }
+
+    const req = new LoginRequest();
+    req.setEmail("demo@example.com");
+    req.setPassword("password1234");
+
+    client.getToken(req, {}, function (err, resp) {
+      setIsUnauthenticated(!err);
+
+      if (!err) {
+        localStorage.setItem("refresh-token", resp.getRefreshToken());
+        localStorage.setItem("access-token", resp.getAccessToken());
+      }
+    });
+  };
+
+  const listProviders = () => {
+    client.listProviders(
+      new google_protobuf_empty_pb.Empty(),
+      {
+        Authorization: `Bearer ${localStorage.getItem("access-token")}`,
+      },
+      function (err, resp) {
+        if (err) {
+          console.error(err);
+        } else {
+          const providersList = resp.getProvidersList();
+          const providers: Provider[] = [];
+          providersList.forEach((p) => {
+            providers.push({
+              id: p.getId(),
+              name: p.getName(),
+              city: p.getCity(),
+              region: p.getRegion(),
+              lob: p.getLineOfBusiness(),
+            });
+          });
+          setProviders(providers);
+        }
+      }
+    );
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("access-token") !== null) {
+      setIsUnauthenticated(true);
+    } else {
+      login();
+    }
   }, []);
+
+  useEffect(() => {
+    if (isUnauthenticated) {
+      listProviders();
+    }
+  }, [isUnauthenticated]);
 
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
+        <h3>Hello!</h3>
+        <p>
+          <strong>You are</strong>:{" "}
+          {isUnauthenticated === undefined
+            ? "Wait a second.."
+            : isUnauthenticated === false
+            ? "Unauthenticated :("
+            : "Authenticated!"}
+        </p>
+        <p>Here is a list of providers in the system:</p>
         <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
+          {providers.map((p) => (
+            <li key={p.id}>
+              {p.name}, {p.region}, {p.city}
+            </li>
+          ))}
         </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
       </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }

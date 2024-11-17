@@ -13,7 +13,7 @@ services:
       - psql_volume_bp:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
   envoy:
-    image: envoyproxy/envoy:dev-448e4e14f4f188687580362a861ae4a0dbb5b1fb
+    image: envoyproxy/envoy:v1.31-latest
     ports:
       - "8080:8080"
       - "9901:9901"

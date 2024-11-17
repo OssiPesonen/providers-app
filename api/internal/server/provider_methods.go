@@ -21,11 +21,13 @@ func (s *Server) ListProviders(context context.Context, _ *emptypb.Empty) (*pb.L
 	}
 
 	providersSlice := []*pb.ReadProviderResponse{}
-
 	for _, result := range *providers {
 		p := pb.ReadProviderResponse{
-			Id:   int32(result.Id),
-			Name: result.Name,
+			Id:             int32(result.Id),
+			Name:           result.Name,
+			Region:         result.Region,
+			City:           result.City,
+			LineOfBusiness: result.LineOfBusiness,
 		}
 
 		providersSlice = append(providersSlice, &p)
