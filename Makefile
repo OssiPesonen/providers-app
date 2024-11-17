@@ -14,8 +14,19 @@ build-api-win:
 dev-api:
 	@cd api; go run cmd/main.go
 
+gen-proto: gen-proto-client gen-proto-api
+	@echo "Protocol buffer files generated for API and client!"
+
+gen-proto-client:
+	@rm -rf ui/src/proto
+	@mkdir -p ui/src/proto
+	protoc \
+	--js_out=import_style=commonjs,binary:ui/src \
+	--grpc-web_out=import_style=typescript,mode=grpcwebtext:ui/src \
+    proto/traffic_lights_service.proto
+
 # Generate protocol buffer files for Go (API)
-gen-proto:
+gen-proto-api:
 	protoc \
 	--go_out=api \
 	--go_opt=paths=source_relative \
@@ -25,20 +36,20 @@ gen-proto:
 
 # Create DB container
 docker-up:
-	@if docker compose -f api/docker/docker-compose.yml --env-file api/.env up --build 2>/dev/null; then \
+	@if docker compose -f docker/docker-compose.yml --env-file api/.env up --build 2>/dev/null; then \
 		: ; \
 	else \
 		echo "Falling back to Docker Compose V1"; \
-		docker-compose -f api/docker/docker-compose.yml --env-file api/.env up --build; \
+		docker-compose -f docker/docker-compose.yml --env-file api/.env up --build; \
 	fi
 
 # Shutdown DB container
 docker-down:
-	@if docker compose -f api/docker/docker-compose.yml down 2>/dev/null; then \
+	@if docker compose -f docker/docker-compose.yml down 2>/dev/null; then \
 		: ; \
 	else \
 		echo "Falling back to Docker Compose V1"; \
-		docker-compose -f api/docker/docker-compose.yml down; \
+		docker-compose -f docker/docker-compose.yml down; \
 	fi
 
 # Test the application

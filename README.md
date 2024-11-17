@@ -17,6 +17,8 @@ The idea here is service providers could register to this platform and simply le
 
 Start off by copying .env.example to .env and filling out the values. If you are running this app locally, no changes are necessary. 
 
+If you wish to compile the protocol buffer files for the UI, you need to follow the installation guide at [grpc-web](https://github.com/grpc/grpc-web) repo.
+
 You can find helper commands below that are run via `make`. To run the app in watch mode for development, you need to install [air-verse/air](https://github.com/air-verse/air)
 
     go install github.com/air-verse/air@latest

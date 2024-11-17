@@ -1,19 +1,33 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
+	"os/signal"
 
 	"github.com/ossipesonen/go-traffic-lights/internal/config"
 	"github.com/ossipesonen/go-traffic-lights/internal/server"
 )
 
 func main() {
+	ctx := context.Background()
 	logger := log.New(os.Stdout, "http: ", log.LstdFlags)
-	logger.Println("Server starting")
+	logger.Println("starting...")
 
 	config := config.New()
-	server.New(config, logger)
+	s := server.New(config, logger)
 
-	logger.Println("Graceful shutdown complete.")
+	// graceful shutdown
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+
+	go func() {
+		for range c {
+			logger.Println("shutting down server...")
+
+			s.GracefulStop()
+			<-ctx.Done()
+		}
+	}()
 }
