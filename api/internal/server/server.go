@@ -16,6 +16,8 @@ import (
 	pb "github.com/ossipesonen/go-traffic-lights/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
 )
 
 // Server must implement TrafficLightsServiceClient interface
@@ -28,6 +30,7 @@ type Server struct {
 
 // Set up gRPC server to listen for method calls
 func New(config *config.Config, logger *log.Logger) *grpc.Server {
+	logger.Printf("server starting on port: %d", config.Server.Port)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Server.Port))
 	if err != nil {
 		logger.Fatalf("failed to listen: %v", err)
@@ -45,8 +48,11 @@ func New(config *config.Config, logger *log.Logger) *grpc.Server {
 	}
 
 	s := grpc.NewServer(
+		grpc.Creds(insecure.NewCredentials()),
 		grpc.UnaryInterceptor(authInterceptor.UnaryAuthMiddleware),
 	)
+
+	reflection.Register(s)
 
 	// Setup App to call from methods
 	db := database.New(&database.DBConfig{
@@ -65,6 +71,9 @@ func New(config *config.Config, logger *log.Logger) *grpc.Server {
 		App:    app,
 		Auth:   auth,
 	})
+
+	// start gRPC server
+	log.Println("starting gRPC server...")
 
 	if err := s.Serve(lis); err != nil {
 		logger.Fatalf("failed to serve: %v", err)

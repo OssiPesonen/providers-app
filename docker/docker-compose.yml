@@ -1,4 +1,5 @@
 services:
+
   psql_bp:
     image: postgres:latest
     restart: unless-stopped
@@ -10,7 +11,14 @@ services:
       - "${APP_DB_PORT}:5432"
     volumes:
       - psql_volume_bp:/var/lib/postgresql/data
-      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+  envoy:
+    image: envoyproxy/envoy:dev-448e4e14f4f188687580362a861ae4a0dbb5b1fb
+    ports:
+      - "8080:8080"
+      - "9901:9901"
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
 
 volumes:
   psql_volume_bp:

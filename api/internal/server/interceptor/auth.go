@@ -39,6 +39,8 @@ func NewAuthInterceptor(validator Validator, logger *log.Logger, whitelistedRout
 }
 
 func (a *AuthInterceptor) UnaryAuthMiddleware(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+	a.logger.Printf("Receiving request to method: %s", info.FullMethod)
+
 	// Grab metadata for authorization key
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
