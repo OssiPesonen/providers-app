@@ -18,8 +18,9 @@ export default function Home() {
   const [providers, setProviders] = useState<Provider[]>([]);
 
   const client = new TrafficLightsServiceClient("http://localhost:8080");
-  const { login, isAuthenticated, getAccessToken } = useAuth(client);
+  const { login, isAuthenticated, getAccessToken, authError } = useAuth(client);
 
+  // Todo: move to it's own hook or repository
   const listProviders = () => {
     client.listProviders(
       new google_protobuf_empty_pb.Empty(),
@@ -57,22 +58,28 @@ export default function Home() {
     }
   }, [isAuthenticated]);
 
+  const authContent = isAuthenticated ? "Authenticated" : "Unauthenticated";
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <h3>Hello!</h3>
+        <h1>Hello!</h1>
         <p>
-          <strong>You are</strong>:{" "}
-          {isAuthenticated ? "Authenticated" : "Unauthenticated" }
+          <strong>You are</strong>: {authContent}
         </p>
-        <p>Here is a list of providers in the system:</p>
-        <ol>
-          {providers.map((p) => (
-            <li key={p.id}>
-              {p.name}, {p.region}, {p.city}
-            </li>
-          ))}
-        </ol>
+        { authError && <p>There was an issue when attempting to authenticate</p> }
+        { isAuthenticated && (
+          <div id="providers">
+            <p>Here is a list of providers in the system:</p>
+            <ol>
+              {providers.map((p) => (
+                <li key={p.id}>
+                  {p.name}, {p.region}, {p.city}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
       </main>
     </div>
   );

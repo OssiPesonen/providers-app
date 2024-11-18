@@ -58,7 +58,7 @@ const useAuth = (client: TrafficLightsServiceClient) => {
   };
 
   const [isAuthenticated, setIsAuthenticated] = useState(
-    getAccessToken() !== null
+    getAccessToken() !== ""
   );
 
   const login = (email: string, password: string) => {
@@ -69,11 +69,11 @@ const useAuth = (client: TrafficLightsServiceClient) => {
 
     client.getToken(req, {}, function (err, resp) {
       if (!err) {
-        localStorage.setItem(refreshTokenCacheKey, resp.getRefreshToken());
-        localStorage.setItem(accessTokenCacheKey, resp.getAccessToken());
+        setLocalStorageItem(refreshTokenCacheKey, resp.getRefreshToken());
+        setLocalStorageItem(accessTokenCacheKey, resp.getAccessToken());
         setIsAuthenticated(true);
       } else {
-        setError(err.message);
+        setError("Invalid credentials");
       }
     });
   };
