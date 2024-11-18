@@ -14,6 +14,9 @@ build-api-win:
 dev-api:
 	@cd api; go run cmd/main.go
 
+dev-ui:
+	@cd ui; npm run dev
+
 gen-proto: gen-proto-client gen-proto-api
 	@echo "Protocol buffer files generated for API and client!"
 

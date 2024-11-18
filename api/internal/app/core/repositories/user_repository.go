@@ -74,8 +74,8 @@ func (r *UserRepository) SaveRefreshToken(refreshTokenEntry *models.RefreshToken
 }
 
 // Revoke all refresh tokens by purging them from the sessions table
-func (r *UserRepository) RevokeRefreshToken(token string, userId int) error {
-	q := r.db.Handle().SQL().DeleteFrom(r.sessionsTable).Where("token = ?", token).And("user_id = ?", userId)
+func (r *UserRepository) RevokeRefreshToken(token string) error {
+	q := r.db.Handle().SQL().DeleteFrom(r.sessionsTable).Where("token = ?", token)
 
 	_, err := q.Exec()
 	if err != nil {
@@ -96,10 +96,10 @@ func (r *UserRepository) RevokeAllRefreshTokens(userId int) error {
 	return nil
 }
 
-func (r *UserRepository) GetRefreshToken(token string, userId int) (*models.RefreshTokenEntry, error) {
+func (r *UserRepository) GetRefreshToken(token string) (*models.RefreshTokenEntry, error) {
 	var refreshToken = &models.RefreshTokenEntry{}
 
-	q := r.db.Handle().SQL().Select("token", "expires", "user_id").From(r.sessionsTable).Where("token = ?", token).And("user_id = ?", userId)
+	q := r.db.Handle().SQL().Select("token", "expires", "user_id").From(r.sessionsTable).Where("token = ?", token)
 	if err := q.One(&refreshToken); err != nil {
 		return nil, err
 	}

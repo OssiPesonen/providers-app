@@ -64,14 +64,7 @@ func (s *Server) RegisterUser(ctx context.Context, in *pb.RegistrationRequest) (
 }
 
 func (s *Server) RefreshToken(ctx context.Context, in *pb.RefreshTokenRequest) (*pb.TokenResponse, error) {
-	userId := ctx.Value(interceptor.UserIdKey).(string)
-
-	if userId == "" {
-		return nil, status.Error(codes.InvalidArgument, "user id is missing")
-	}
-
-	userIdInt, _ := strconv.Atoi(userId)
-	tokens, err := s.App.Services.User.RefreshTokens(in.RefreshToken, userIdInt)
+	tokens, err := s.App.Services.User.RefreshTokens(in.RefreshToken)
 
 	if err != nil {
 		s.Logger.Printf("something went wrong when attempting to revoke refresh token: %v", err)
@@ -88,13 +81,7 @@ func (s *Server) RefreshToken(ctx context.Context, in *pb.RefreshTokenRequest) (
 }
 
 func (s *Server) RevokeRefreshToken(ctx context.Context, in *pb.RefreshTokenRequest) (*emptypb.Empty, error) {
-	userId := ctx.Value(interceptor.UserIdKey).(string)
-	if userId == "" {
-		return nil, status.Error(codes.FailedPrecondition, "user ID was not determined")
-	}
-
-	userIdInt, _ := strconv.Atoi(userId)
-	err := s.App.Services.User.RevokeRefreshToken(in.RefreshToken, userIdInt)
+	err := s.App.Services.User.RevokeRefreshToken(in.RefreshToken)
 	if err != nil {
 		e := s.FromError(err)
 		return nil, status.Error(e.Code, e.Message)

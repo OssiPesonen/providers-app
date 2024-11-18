@@ -39,11 +39,3 @@ CREATE TABLE
     "user_id" integer not null,
     constraint "sessions_pkey" primary key ("token","user_id")
 );
-
--- line of business
-
-CREATE TABLE
-  "public"."lines_of_business" (
-    "id" serial not null,
-    "title" varchar(255) not null default NOW(),
-);

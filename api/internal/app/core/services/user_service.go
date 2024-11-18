@@ -17,8 +17,8 @@ type UserRepository interface {
 	Find(email string) (*models.User, error)
 	Add(user *models.User) error
 	SaveRefreshToken(refreshTokenEntry *models.RefreshTokenEntry) error
-	GetRefreshToken(refreshToken string, userId int) (*models.RefreshTokenEntry, error)
-	RevokeRefreshToken(refreshToken string, userId int) error
+	GetRefreshToken(refreshToken string) (*models.RefreshTokenEntry, error)
+	RevokeRefreshToken(refreshToken string) error
 	RevokeAllRefreshTokens(userId int) error
 }
 
@@ -109,7 +109,7 @@ func (s *UserService) GenerateTokens(user *models.User) (*auth.IssuedTokens, err
 	// Refresh token is persisted in storage so we can revoke it as it's used to refresh
 	err = s.repository.SaveRefreshToken(&models.RefreshTokenEntry{
 		RefreshToken: tokens.RefreshToken,
-		Expires:      time.Now().Add(time.Hour * 24),
+		Expires:      time.Now().Add(time.Hour * 24).UTC(),
 		UserId:       user.Id,
 	})
 
@@ -123,15 +123,9 @@ func (s *UserService) GenerateTokens(user *models.User) (*auth.IssuedTokens, err
 	}, nil
 }
 
-func (s *UserService) RefreshTokens(refreshToken string, userId int) (*auth.IssuedTokens, error) {
-	user, err := s.Find(userId)
-
-	if err != nil {
-		return nil, core.NewError(core.ErrInternal, err)
-	}
-
+func (s *UserService) RefreshTokens(refreshToken string) (*auth.IssuedTokens, error) {
 	// Ensure token is still valid
-	token, err := s.repository.GetRefreshToken(refreshToken, userId)
+	token, err := s.repository.GetRefreshToken(refreshToken)
 	if err != nil {
 		if err == db.ErrNoMoreRows {
 			return nil, core.NewError(core.ErrRevokedRefreshToken, err)
@@ -142,17 +136,28 @@ func (s *UserService) RefreshTokens(refreshToken string, userId int) (*auth.Issu
 
 	if token.Expires.Before(time.Now()) {
 		// Delete the refresh token as it is already expired
-		go s.RevokeRefreshToken(refreshToken, userId)
+		go s.RevokeRefreshToken(refreshToken)
 		return nil, core.NewError(core.ErrExpiredRefreshToken, err)
 	}
 
+	user, err := s.repository.Read(token.UserId)
+	if err != nil {
+		if err == db.ErrNoMoreRows {
+			// This means user is no longer in the system so it's am edge case
+			return nil, core.NewError(core.ErrRevokedRefreshToken, err)
+		}
+
+		return nil, core.NewError(core.ErrUserNotFound, err)
+	}
+
+	// Generate new pair
 	tokens, err := s.GenerateTokens(user)
 	if err != nil {
 		return nil, err
 	}
 
 	// Finally revoke used refresh token
-	go s.RevokeRefreshToken(refreshToken, userId)
+	go s.RevokeRefreshToken(refreshToken)
 
 	return &auth.IssuedTokens{
 		AccessToken:  tokens.AccessToken,
@@ -160,9 +165,9 @@ func (s *UserService) RefreshTokens(refreshToken string, userId int) (*auth.Issu
 	}, nil
 }
 
-func (s *UserService) RevokeRefreshToken(refreshToken string, userId int) error {
+func (s *UserService) RevokeRefreshToken(refreshToken string) error {
 	// Check that the refresh token exists
-	_, err := s.repository.GetRefreshToken(refreshToken, userId)
+	_, err := s.repository.GetRefreshToken(refreshToken)
 	if err != nil {
 		if err == db.ErrNoMoreRows {
 			return core.NewError(core.ErrNotFound, err)
@@ -171,7 +176,7 @@ func (s *UserService) RevokeRefreshToken(refreshToken string, userId int) error 
 		return core.NewError(core.ErrInternal, err)
 	}
 
-	err = s.repository.RevokeRefreshToken(refreshToken, userId)
+	err = s.repository.RevokeRefreshToken(refreshToken)
 
 	if err != nil {
 		// log here as we also run this call on a goroutine to revoke refresh tokens from storage

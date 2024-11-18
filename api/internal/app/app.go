@@ -25,9 +25,9 @@ type UserService interface {
 	// Generate access and refresh token for user
 	GenerateTokens(user *models.User) (*auth.IssuedTokens, error)
 	// Generate new pair of access and refresh token for user
-	RefreshTokens(refreshToken string, userId int) (*auth.IssuedTokens, error)
+	RefreshTokens(refreshToken string) (*auth.IssuedTokens, error)
 	// Revoke a specific refresh token for given user
-	RevokeRefreshToken(refreshToken string, userId int) error
+	RevokeRefreshToken(refreshToken string) error
 	// Revoke all active refresh tokens for user
 	RevokeAllRefreshTokens(userId int) error
 }
