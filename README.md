@@ -3,7 +3,7 @@
 This is a hobby application that has taken it's inspiration from the lights you see next to an exam room (green, yellow, red). The idea is to provide a platform for service providers that take on clients to let people know if they have capacity, if they might have capacity (can be contacted) or they are fully booked. Users should be able to list service providers in a specific location, for a specific service.
 
 > [!WARNING]  
-> Given that I am someone who likes to do prototyping in the beginning, while doing upfront design (and also to figure out how some things actually work), I am continuously refactoring this app while incrementally adding features. Things might change drastically.
+> Given that I am someone who likes to do prototyping in the beginning, while doing upfront design (and also to figure out how some things actually work), I am continuously refactoring this app while incrementally adding features. Things might change drastically. Things might also still be in a broken state, as I have not gone through edge cases.
 
 ## Motivation
 
