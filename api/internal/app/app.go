@@ -5,8 +5,8 @@ import (
 
 	"github.com/ossipesonen/go-traffic-lights/internal/app/auth"
 	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core/repositories"
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core/services"
+	"github.com/ossipesonen/go-traffic-lights/internal/app/core/providers"
+	"github.com/ossipesonen/go-traffic-lights/internal/app/core/users"
 	"github.com/ossipesonen/go-traffic-lights/internal/config"
 	"github.com/ossipesonen/go-traffic-lights/pkg/database"
 )
@@ -65,13 +65,13 @@ func New(config *config.Config, db database.Database, logger *log.Logger) *App {
 
 	// Repositores should have db as a dependency.
 	// Repositories should not be directly accessible.
-	userRepository := repositories.NewUserRepository(db, logger)
-	providerRepository := repositories.NewProviderRepository(db, logger)
+	userRepository := users.NewUserRepository(db, logger)
+	providerRepository := providers.NewProviderRepository(db, logger)
 
 	// Services should have repository as a depency if data access is required
 	// Service is the entry point to a component.
-	srvc.User = services.NewUserService(userRepository, auth, logger)
-	srvc.Provider = services.NewProviderService(providerRepository, logger)
+	srvc.User = users.NewUserService(userRepository, auth, logger)
+	srvc.Provider = providers.NewProviderService(providerRepository, logger)
 
 	return &App{
 		Services: srvc,

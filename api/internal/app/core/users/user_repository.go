@@ -1,10 +1,9 @@
-package repositories
+package users
 
 import (
 	"log"
 
 	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core/services"
 	"github.com/ossipesonen/go-traffic-lights/pkg/database"
 )
 
@@ -16,7 +15,7 @@ type UserRepository struct {
 }
 
 // Ensure we implement interface
-var _ services.UserRepository = &UserRepository{}
+var _ IUserRepository = &UserRepository{}
 
 func NewUserRepository(db database.Database, logger *log.Logger) *UserRepository {
 	return &UserRepository{

@@ -1,4 +1,4 @@
-package repositories
+package providers
 
 import (
 	"errors"
@@ -12,6 +12,9 @@ import (
 type Identifier struct {
 	Id int
 }
+
+// Ensure we implement interface correctly
+var _ IProviderRepository = &ProviderRepository{}
 
 type ProviderRepository struct {
 	db     database.Database

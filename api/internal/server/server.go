@@ -42,7 +42,7 @@ func New(config *config.Config, logger *log.Logger) *grpc.Server {
 	}
 
 	// Authentication middleware. Skip Login and Register methods
-	authInterceptor, err := interceptor.NewAuthInterceptor(auth, logger, []string{"GetToken", "RefreshToken", "RegisterUser"})
+	authInterceptor, err := interceptor.NewAuthInterceptor(auth, logger, []string{"GetToken", "RefreshToken", "ListProviders", "RegisterUser"})
 	if err != nil {
 		logger.Fatalf("failed to create auth interceptor: %v", err)
 	}

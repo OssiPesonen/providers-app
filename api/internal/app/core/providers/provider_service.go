@@ -1,4 +1,4 @@
-package services
+package providers
 
 import (
 	"log"
@@ -9,7 +9,7 @@ import (
 )
 
 // Define repository interface that this service needs
-type ProviderRepository interface {
+type IProviderRepository interface {
 	List() (*[]models.Provider, error)
 	Read(id int) (*models.Provider, error)
 	Find(name string, city string) (*models.Provider, error)
@@ -18,11 +18,11 @@ type ProviderRepository interface {
 
 type ProviderService struct {
 	logger     *log.Logger
-	repository ProviderRepository
+	repository IProviderRepository
 }
 
 // This is the entrypoint to the module
-func NewProviderService(repository ProviderRepository, logger *log.Logger) *ProviderService {
+func NewProviderService(repository IProviderRepository, logger *log.Logger) *ProviderService {
 	return &ProviderService{
 		logger:     logger,
 		repository: repository,

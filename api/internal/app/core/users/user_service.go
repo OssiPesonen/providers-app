@@ -1,4 +1,4 @@
-package services
+package users
 
 import (
 	"errors"
@@ -12,7 +12,7 @@ import (
 )
 
 // Define repository interface that this service needs
-type UserRepository interface {
+type IUserRepository interface {
 	Read(id int) (*models.User, error)
 	Find(email string) (*models.User, error)
 	Add(user *models.User) error
@@ -24,11 +24,11 @@ type UserRepository interface {
 
 type UserService struct {
 	logger     *log.Logger
-	repository UserRepository
+	repository IUserRepository
 	auth       *auth.Auth
 }
 
-func NewUserService(repository UserRepository, auth *auth.Auth, logger *log.Logger) *UserService {
+func NewUserService(repository IUserRepository, auth *auth.Auth, logger *log.Logger) *UserService {
 	return &UserService{
 		logger:     logger,
 		repository: repository,
