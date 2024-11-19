@@ -20,13 +20,12 @@ dev-ui:
 gen-proto: gen-proto-client gen-proto-api
 	@echo "Protocol buffer files generated for API and client!"
 
+# Generation through protobuf-ts library which is more up to date than grpc-web
 gen-proto-client:
-	@rm -rf ui/src/proto
-	@mkdir -p ui/src/proto
-	protoc \
-	--js_out=import_style=commonjs,binary:ui/src \
-	--grpc-web_out=import_style=typescript,mode=grpcwebtext:ui/src \
-    proto/traffic_lights_service.proto
+	@rm -rf ui/src/lib/proto
+	@mkdir -p ui/src/lib/proto
+	@cd ui
+	npx protoc --ts_out src/lib/proto --proto_path ../proto ../proto/traffic_lights_service.proto
 
 # Generate protocol buffer files for Go (API)
 gen-proto-api:
