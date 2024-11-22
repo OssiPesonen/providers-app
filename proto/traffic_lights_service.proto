@@ -68,6 +68,6 @@ message TokenResponse {
     string access_token = 1;
     int32 exp = 2;
     string token_type = 3;        
-    optional string refresh_token = 4;
+    string refresh_token = 4;
     optional string scope = 5;
 }

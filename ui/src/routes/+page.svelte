@@ -8,7 +8,7 @@
 		<h1>Hello!</h1>
 		<p>Here is a list of providers in the system:</p>
 		<ol>
-			{#each data.providers as { id, name, city, region, lob }}
+			{#each data.providers as { id, name, city, region }}
 				<li>{name}, {city}, {region}</li>
 			{/each}
 		</ol>
