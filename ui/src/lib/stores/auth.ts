@@ -1,9 +1,10 @@
-import { readable } from 'svelte/store';
+import { readonly, writable } from 'svelte/store';
 import { jwtDecode } from 'jwt-decode';
 import { apiClient } from '$lib/api/client';
 import { getLocalStorageItem, setLocalStorageItem } from '$lib/utils/localStorage.util';
+import type { RpcError } from 'grpc-web';
 
-let error = '';
+const error = writable('');
 
 const accessTokenCacheKey = 'access-token';
 const refreshTokenCacheKey = 'refresh-token';
@@ -17,29 +18,20 @@ const isTokenStillValid = (token: string) => {
 };
 
 const refreshToken = async () => {
-	error = '';
+	error.set('');
 	const refreshToken = getLocalStorageItem(refreshTokenCacheKey);
 	if (!refreshToken) {
 		// Todo: Write a custom error
 		throw new Error('Refresh token missing');
 	}
-
-	try {
-	const client = apiClient();
-	await client.getRefreshToken({
-		refreshToken,
-	});
-} catch(error) {
-	console.error(error);
-}
 };
 
-export const getAccessToken = () => {
+export const getAccessToken = async () => {
 	const token: null | string = getLocalStorageItem(accessTokenCacheKey);
 	// Token in cache but has expired
 	if (token && !isTokenStillValid(token)) {
 		// Attempt a refresh
-		refreshToken();
+		await refreshToken();
 		return getLocalStorageItem(accessTokenCacheKey);
 	}
 
@@ -47,7 +39,7 @@ export const getAccessToken = () => {
 };
 
 export const login = async (email: string, password: string) => {
-	error = '';
+	error.set('');
 	const client = apiClient();
 
 	try {
@@ -58,12 +50,13 @@ export const login = async (email: string, password: string) => {
 
 		setLocalStorageItem(accessTokenCacheKey, r.accessToken);
 		setLocalStorageItem(refreshTokenCacheKey, r.refreshToken);
+		return true;
 	} catch (e) {
-		console.error(e);
+		const rpcError = e as RpcError;
+		error.set(rpcError.code.toString());
+		return false;
 	}
 };
 
-export const isAuthenticated = (): boolean => getAccessToken() !== '';
-export const authError = readable(error, function (set) {
-	set(error);
-});
+export const isAuthenticated = async (): Promise<boolean> => await getAccessToken() !== '';
+export const authError = readonly(error);

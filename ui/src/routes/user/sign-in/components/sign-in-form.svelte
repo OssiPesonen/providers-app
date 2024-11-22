@@ -1,45 +1,54 @@
 <script lang="ts">
-	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { z } from 'zod';
+	import type { PageData } from '../$types'
+	import { goto } from '$app/navigation';
 	import { Icon } from 'svelte-icons-pack';
-	import { LuCircleAlert } from "svelte-icons-pack/lu";
-	import { applyAction, deserialize } from '$app/forms';
-	import type { ActionResult } from '@sveltejs/kit';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { LuCircleAlert } from 'svelte-icons-pack/lu';
+	import { zod } from 'sveltekit-superforms/adapters';
+	import { superForm, defaults } from 'sveltekit-superforms';
 	import * as Form from '$lib/components/ui/form';
+	import * as Alert from '$lib/components/ui/alert';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import * as Alert from '$lib/components/ui/alert/index.js';
-	import type { ActionData } from '../$types';
-	
-	import { formSchema, type FormSchema } from '../schema';
+	import { login, authError } from '$lib/stores/auth';
 
-	interface Props {
-		data: SuperValidated<Infer<FormSchema>>;
-		actionData: ActionData;
-	}
-
-	const { data, actionData }: Props = $props();
-	const form = superForm(data, {
-		validators: zodClient(formSchema)
+	const formSchema = z.object({
+		email: z.string().email(),
+		password: z
+			.string()
+			.min(8, { message: 'Must be 8 or more characters long' })
+			.max(50, { message: 'Must be 50 characters or less' })
 	});
 
-	const { form: formData, enhance } = form;
-	
-	async function handleSubmit(event: Event &{ currentTarget: EventTarget & HTMLFormElement}) {
+	const form = superForm(defaults(zod(formSchema)), {
+		SPA: true,
+		validators: zod(formSchema),
+		resetForm: false
+	});
+
+	const { form: formData, enhance, validateForm, errors } = form;
+
+	async function handleSubmit(event: Event) {
 		event.preventDefault();
-		const data = new FormData(event.currentTarget);
+		const result = await validateForm();
 
-		const response = await fetch(event.currentTarget.action, {
-			method: 'POST',
-			body: data
-		});
+		if (!result.valid) {
+			errors.update((v) => {
+				return {
+					...v,
+					email: result.errors.email,
+					password: result.errors.password
+				};
+			});
 
-		const result: ActionResult<{ tokens: { accessToken: string, refreshToken: string }}> = deserialize(await response.text());
-
-		if (result.type === 'success') {
-			const { refreshToken, accessToken } = result.data
+			return;
 		}
 
-		applyAction(result);
+		const success = await login($formData.email, $formData.password);
+
+		// Only track success as error is already being subscribed to
+		if (success) {
+			return await goto('/');
+		}
 	}
 </script>
 
@@ -59,13 +68,12 @@
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
-		<Form.Button class="w-full mt-2" >Submit</Form.Button>
-
-		{#if actionData?.success === false}
-			<Alert.Root variant="destructive" class="mt-4 bg-red-700/10">
-				<Icon src={LuCircleAlert} />
-				<Alert.Title>Invalid credentials</Alert.Title>
-				<Alert.Description>Invalid email or password. Please try again</Alert.Description>
+		<Form.Button class="w-full mt-2">Submit</Form.Button>
+		{#if $authError === 'UNAUTHENTICATED'}
+			<Alert.Root variant="destructive" class="mt-4">
+				<Icon src={LuCircleAlert} className="h-4 w-4" />
+				<Alert.Title>Error</Alert.Title>
+				<Alert.Description>Invalid email or password. Please try again.</Alert.Description>
 			</Alert.Root>
 		{/if}
 	</form>
