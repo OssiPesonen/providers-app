@@ -1,15 +1,18 @@
 <script lang="ts">
+    import { page } from '$app/stores';
 	import { z } from 'zod';
-	import type { PageData } from '../$types'
 	import { goto } from '$app/navigation';
 	import { Icon } from 'svelte-icons-pack';
-	import { LuCircleAlert } from 'svelte-icons-pack/lu';
+	import { LuCircleAlert, LuCircleCheck } from 'svelte-icons-pack/lu';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { superForm, defaults } from 'sveltekit-superforms';
 	import * as Form from '$lib/components/ui/form';
 	import * as Alert from '$lib/components/ui/alert';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { login, authError } from '$lib/stores/auth';
+	import { buttonVariants } from '$lib/components/ui/button';
+	
+	import { toast } from "svelte-sonner";
 
 	const formSchema = z.object({
 		email: z.string().email(),
@@ -26,6 +29,15 @@
 	});
 
 	const { form: formData, enhance, validateForm, errors } = form;
+
+	const hasRegistered = $page.url.searchParams.has('registered');
+	if (hasRegistered) {
+		toast.success('Congratulations', {
+			position: 'top-center',
+			description: 'You have successfully created an account. You may now log in.',
+			dismissable: true,
+		});
+	}
 
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
@@ -53,10 +65,10 @@
 </script>
 
 <div class="grid gap-6">
-	<form method="POST" use:enhance onsubmit={handleSubmit}>
+	<form use:enhance onsubmit={handleSubmit}>
 		<Form.Field {form} name="email" class="mb-2">
 			<Form.Control let:attrs>
-				<Form.Label>Username</Form.Label>
+				<Form.Label>Email address</Form.Label>
 				<Input {...attrs} bind:value={$formData.email} />
 			</Form.Control>
 			<Form.FieldErrors />
@@ -68,13 +80,23 @@
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
-		<Form.Button class="w-full mt-2">Submit</Form.Button>
-		{#if $authError === 'UNAUTHENTICATED'}
-			<Alert.Root variant="destructive" class="mt-4">
-				<Icon src={LuCircleAlert} className="h-4 w-4" />
-				<Alert.Title>Error</Alert.Title>
-				<Alert.Description>Invalid email or password. Please try again.</Alert.Description>
-			</Alert.Root>
-		{/if}
+		<Form.Button class="w-full mt-2">Sign in</Form.Button>
 	</form>
+	{#if $authError === 'UNAUTHENTICATED'}
+		<Alert.Root variant="destructive" class="mt-4">
+			<Icon src={LuCircleAlert} className="h-4 w-4" />
+			<Alert.Title>Error</Alert.Title>
+			<Alert.Description>Invalid email or password. Please try again.</Alert.Description>
+		</Alert.Root>
+	{/if}
+	<div class="relative">
+		<div class="absolute inset-0 flex items-center">
+			<span class="w-full border-t"></span>
+		</div>
+		<div class="relative flex justify-center text-xs uppercase">
+			<span class="bg-background text-muted-foreground px-2"> Or </span>
+		</div>
+	</div>
+	<a href="/user/sign-up" class={buttonVariants({ variant: 'outline' })}> Sign up </a>
+	<a href="/" class={buttonVariants({ variant: 'ghost' })}> Back to Frontpage </a>
 </div>

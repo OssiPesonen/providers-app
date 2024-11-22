@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as FormPrimitive from "formsnap";
-	import { cn } from "$lib/utils.js";
+	import { cn } from "$lib/utils//tailwind.utils.ts";
 
 	type $$Props = FormPrimitive.FieldErrorsProps & {
 		errorClasses?: string | undefined | null;
