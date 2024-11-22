@@ -1,7 +1,6 @@
 import type { PageLoad } from './$types';
 import { Empty } from '$lib/proto/google/protobuf/empty';
-import { TrafficLightsServiceClient  } from '$lib/proto/traffic_lights_service.client';
-import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
+import { apiClient } from '$lib/api/client';
 
 export type Provider = {
     id: number;
@@ -13,16 +12,14 @@ export type Provider = {
 
 export const load: PageLoad = async (): Promise<{providers: Provider[]}> => {
     let providers: Provider[] = [];
-    const transport = new GrpcWebFetchTransport({
-        baseUrl: "http://localhost:8080"
-    });
-    const client = new TrafficLightsServiceClient(transport);
-    
+    const client = apiClient();
+
     try {
         const { response } = await client.listProviders(Empty);
         providers = response.providers;
-    } catch(err) {
-        console.error(err)
+    } catch(error) {
+        // Todo: Define the interface for this and return
+        console.error(error);
     }
 
 	return {

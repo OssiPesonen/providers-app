@@ -1,14 +1,15 @@
 # Simple Makefile for a Go project
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 build-api:
 	@echo "Building..."
 	@cd api; go build -o bin/main cmd/main.go
-	@echo "Done! You can find the binary in api/bin/"
+	@echo "-- Build done. You can find the binary in api/bin/"
 	
 build-api-win:
 	@echo "Building app for Windows platform..."
 	@cd api; go build -o bin/main.exe cmd/main.go
-	@echo "Done! You can find the executable in api/bin/"
+	@echo "-- Build done. You can find the executable in api/bin/"
 
 # Run the Go application
 dev-api:
@@ -18,30 +19,30 @@ dev-ui:
 	@cd ui; npm run dev
 
 gen-proto: gen-proto-client gen-proto-api
-	@echo "Protocol buffer files generated for API and client!"
 
 # Generation through protobuf-ts library which is more up to date than grpc-web
 gen-proto-client:
 	@rm -rf ui/src/lib/proto
 	@mkdir -p ui/src/lib/proto
-	@cd ui
-	npx protoc --ts_out src/lib/proto --proto_path ../proto ../proto/traffic_lights_service.proto
+	@cd ui; npx protoc --ts_out src/lib/proto --proto_path $(ROOT_DIR)/proto $(ROOT_DIR)/proto/traffic_lights_service.proto
+	@echo "-- Protocol buffer messages compiled for client"
 
 # Generate protocol buffer files for Go (API)
 gen-proto-api:
-	protoc \
+	@protoc \
 	--go_out=api \
 	--go_opt=paths=source_relative \
     --go-grpc_out=api \
 	--go-grpc_opt=paths=source_relative \
     proto/traffic_lights_service.proto
+	@echo "-- Protocol buffer messages compiled for API"
 
 # Create DB container
 docker-up:
 	@if docker compose -f docker/docker-compose.yml --env-file api/.env up --build 2>/dev/null; then \
 		: ; \
 	else \
-		echo "Falling back to Docker Compose V1"; \
+		echo "-- Falling back to Docker Compose V1"; \
 		docker-compose -f docker/docker-compose.yml --env-file api/.env up --build; \
 	fi
 
@@ -50,23 +51,23 @@ docker-down:
 	@if docker compose -f docker/docker-compose.yml down 2>/dev/null; then \
 		: ; \
 	else \
-		echo "Falling back to Docker Compose V1"; \
+		echo "-- Falling back to Docker Compose V1"; \
 		docker-compose -f docker/docker-compose.yml down; \
 	fi
 
 # Test the application
 test-api:
-	@echo "Running all tests..."
+	@echo "-- Running all tests..."
 	@cd api; go test ./internal/... -v
 
 # Integrations Tests for the application
 itest-api:
-	@echo "Running integration tests..."
+	@echo "-- Running integration tests..."
 	@cd api; go test ./internal/database -v
 
 # Clean the binary
 clean-bin:
-	@echo "Cleaning binaries..."
+	@echo "-- Cleaning binaries..."
 	@rm -f api/bin/main
 
 
