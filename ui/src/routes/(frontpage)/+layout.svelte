@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { Toaster } from "$lib/components/ui/sonner";
 	import { LuLogOut, LuMoon } from 'svelte-icons-pack/lu';
 	import { ModeWatcher, toggleMode, mode } from 'mode-watcher';
 	import { Icon } from 'svelte-icons-pack';
@@ -6,7 +8,6 @@
 	import '$css/globals.css';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import { isAuthenticated } from '$lib/stores/auth';
-	import { onMount } from 'svelte';
 
 	let { children } = $props();
 	let isAuthed = $state(false);
@@ -17,6 +18,7 @@
 </script>
 
 <div id="root">
+	<Toaster />
 	<ModeWatcher />
 	{#if $mode === 'dark'}
 		<div class="fixed top-0 left-0 bottom-0 right-0 -z-30 h-full w-full bg-slate-950">

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ModeWatcher, mode, toggleMode } from 'mode-watcher';
+	import { ModeWatcher, mode } from 'mode-watcher';
 	import '$css/globals.css';
 	import { Toaster } from "$lib/components/ui/sonner";
 

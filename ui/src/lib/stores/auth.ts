@@ -43,7 +43,7 @@ const refreshToken = async () => {
 };
 
 export const getAccessToken = async () => {
-	const token: null | string = getLocalStorageItem(accessTokenCacheKey);
+	const token: string = getLocalStorageItem(accessTokenCacheKey);
 	
 	// Token in cache but has expired
 	if (token && !isTokenStillValid(token)) {
