@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import Spinner from '$components/ui/spinner/spinner.svelte';
 	import { onMount } from 'svelte';
 	import UserSignupForm from './components/sign-up-form.svelte';
 	import { isAuthenticated } from '$lib/stores/auth';

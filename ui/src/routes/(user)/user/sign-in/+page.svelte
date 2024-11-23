@@ -1,10 +1,9 @@
 <script lang="ts">
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import Spinner from '$components/ui/spinner/spinner.svelte';
 	import { onMount } from 'svelte';
 	import UserAuthForm from './components/sign-in-form.svelte';
 	import { isAuthenticated } from '$lib/stores/auth';
 	import { goto } from '$app/navigation';
-	import { toast } from 'svelte-sonner';
 
 	// Assume users are authenticated
 	let authenticated = $state(true);

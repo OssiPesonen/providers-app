@@ -3,10 +3,10 @@
 	import { goto } from '$app/navigation';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { superForm, defaults } from 'sveltekit-superforms';
-	import * as Form from '$lib/components/ui/form';
-	import * as Alert from '$lib/components/ui/alert';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { buttonVariants } from '$lib/components/ui/button';
+	import * as Form from '$components/ui/form';
+	import * as Alert from '$components/ui/alert';
+	import { Input } from '$components/ui/input/index.js';
+	import { buttonVariants } from '$components/ui/button';
 	import { authError, register } from '$lib/stores/auth';
 	import { LuCircleAlert } from 'svelte-icons-pack/lu';
 	import { Icon } from 'svelte-icons-pack';

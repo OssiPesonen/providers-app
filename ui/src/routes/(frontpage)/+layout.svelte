@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Toaster } from "$lib/components/ui/sonner";
+	import { Toaster } from "$components/ui/sonner";
 	import { LuLogOut, LuMoon } from 'svelte-icons-pack/lu';
 	import { ModeWatcher, toggleMode, mode } from 'mode-watcher';
 	import { Icon } from 'svelte-icons-pack';
-	import { Switch } from '$lib/components/ui/switch';
+	import { Switch } from '$components/ui/switch';
 	import '$css/globals.css';
-	import { buttonVariants } from '$lib/components/ui/button';
+	import { buttonVariants } from '$components/ui/button';
 	import { isAuthenticated } from '$lib/stores/auth';
 
 	let { children } = $props();

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { PageData } from '../$types';
-	import * as Card from '$lib/components/ui/card';
-	import Input from '$lib/components/ui/input/input.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$components/ui/card';
+	import Input from '$components/ui/input/input.svelte';
+	import { Button } from '$components/ui/button';
 	import { LuSearch } from 'svelte-icons-pack/lu';
 	import { Icon } from 'svelte-icons-pack';
 	let { data }: { data: PageData } = $props();

@@ -6,11 +6,11 @@
 	import { LuCircleAlert, LuCircleCheck } from 'svelte-icons-pack/lu';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { superForm, defaults } from 'sveltekit-superforms';
-	import * as Form from '$lib/components/ui/form';
-	import * as Alert from '$lib/components/ui/alert';
-	import { Input } from '$lib/components/ui/input/index.js';
+	import * as Form from '$components/ui/form';
+	import * as Alert from '$components/ui/alert';
+	import { Input } from '$components/ui/input/index.js';
 	import { login, authError } from '$lib/stores/auth';
-	import { buttonVariants } from '$lib/components/ui/button';
+	import { buttonVariants } from '$components/ui/button';
 	
 	import { toast } from "svelte-sonner";
 

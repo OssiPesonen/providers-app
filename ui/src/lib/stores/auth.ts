@@ -5,7 +5,6 @@ import { apiClient } from '$lib/api/client';
 import { getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem } from '$lib/utils/localStorage.util';
 
 const error = writable('');
-
 const accessTokenCacheKey = 'access-token';
 const refreshTokenCacheKey = 'refresh-token';
 
@@ -36,6 +35,7 @@ const refreshToken = async () => {
 		setLocalStorageItem(refreshTokenCacheKey, r.refreshToken);
 		return true;
 	} catch (e) {
+		console.debug('token refresh failed');
 		const rpcError = e as RpcError;
 		error.set(rpcError.code.toString());
 		return false;
@@ -57,10 +57,6 @@ export const getAccessToken = async () => {
 	}
 
 	return token;
-};
-
-export const getRefreshToken = () => {
-	return getLocalStorageItem(refreshTokenCacheKey);
 };
 
 export const login = async (email: string, password: string) => {
@@ -87,7 +83,7 @@ export const logout = async () => {
 	error.set('');
 	const client = apiClient();
 	
-	const refreshToken = getRefreshToken();
+	const refreshToken = getLocalStorageItem(refreshTokenCacheKey);
 
 	if (refreshToken) {
 		try {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ModeWatcher, mode } from 'mode-watcher';
 	import '$css/globals.css';
-	import { Toaster } from "$lib/components/ui/sonner";
+	import { Toaster } from "$components/ui/sonner";
 
 	let { children } = $props();
 </script>
