@@ -1,11 +1,10 @@
 import { readonly, writable } from 'svelte/store';
 import { jwtDecode } from 'jwt-decode';
-import { apiClient } from '$lib/api/client';
-import { getLocalStorageItem, setLocalStorageItem } from '$lib/utils/localStorage.util';
 import type { RpcError } from 'grpc-web';
+import { apiClient } from '$lib/api/client';
+import { getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem } from '$lib/utils/localStorage.util';
 
 const error = writable('');
-
 const accessTokenCacheKey = 'access-token';
 const refreshTokenCacheKey = 'refresh-token';
 
@@ -19,19 +18,41 @@ const isTokenStillValid = (token: string) => {
 
 const refreshToken = async () => {
 	error.set('');
+
 	const refreshToken = getLocalStorageItem(refreshTokenCacheKey);
 	if (!refreshToken) {
-		// Todo: Write a custom error
-		throw new Error('Refresh token missing');
+		// Attempted to access refresh token that isn't there -> log out
+		await logout();
+	}
+
+	try {
+		const client = apiClient();
+		const { response: r } = await client.refreshToken({
+			refreshToken
+		});
+
+		setLocalStorageItem(accessTokenCacheKey, r.accessToken);
+		setLocalStorageItem(refreshTokenCacheKey, r.refreshToken);
+		return true;
+	} catch (e) {
+		console.debug('token refresh failed');
+		const rpcError = e as RpcError;
+		error.set(rpcError.code.toString());
+		return false;
 	}
 };
 
 export const getAccessToken = async () => {
-	const token: null | string = getLocalStorageItem(accessTokenCacheKey);
+	const token: string = getLocalStorageItem(accessTokenCacheKey);
+	
 	// Token in cache but has expired
 	if (token && !isTokenStillValid(token)) {
 		// Attempt a refresh
-		await refreshToken();
+		const success = await refreshToken();
+		if (!success) {
+			await logout();
+		}
+
 		return getLocalStorageItem(accessTokenCacheKey);
 	}
 
@@ -40,9 +61,9 @@ export const getAccessToken = async () => {
 
 export const login = async (email: string, password: string) => {
 	error.set('');
-	const client = apiClient();
 
 	try {
+		const client = apiClient();
 		const { response: r } = await client.getToken({
 			email,
 			password
@@ -57,6 +78,47 @@ export const login = async (email: string, password: string) => {
 		return false;
 	}
 };
+
+export const logout = async () => {
+	error.set('');
+	const client = apiClient();
+	
+	const refreshToken = getLocalStorageItem(refreshTokenCacheKey);
+
+	if (refreshToken) {
+		try {
+			// We don't care about the response here
+			await client.revokeRefreshToken({
+				refreshToken,
+			});
+		} catch {
+			// Ignore
+		}
+	}
+	
+	removeLocalStorageItem(accessTokenCacheKey);
+	removeLocalStorageItem(refreshTokenCacheKey);
+};
+
+export const register = async (email: string, password: string) => {
+	error.set('');
+	try {
+		const client = apiClient();
+		const { status } = await client.registerUser({
+			email,
+			password,
+			username: '',
+		});
+
+		return status.code === 'OK';
+	} catch (e) {
+		// This should only occur with network errors, or internal server errors
+		const rpcError = e as RpcError;
+		error.set(rpcError.code.toString());
+		return false;
+	}
+};
+
 
 export const isAuthenticated = async (): Promise<boolean> => await getAccessToken() !== '';
 export const authError = readonly(error);

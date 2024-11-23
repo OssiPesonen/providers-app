@@ -39,16 +39,26 @@ Build the application binary (Windows)
 make build-api-win
 ```
 
+Compile protocol buffer messages for client (UI)
+```bash
+make gen-proto-client
+```
+
+Compile protocol buffer messages for API (Go)
+```bash
+make gen-proto-api
+```
+
 Run the application
 ```bash
 make dev-api
 ```
-Create database container
+Start database and grpc proxy containers
 ```bash
 make docker-up
 ```
 
-Shutdown DB Container
+Shutdown containers
 ```bash
 make docker-down
 ```
