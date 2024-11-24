@@ -11,7 +11,7 @@
 	import { goto } from '$app/navigation';
 	import { Icon } from 'svelte-icons-pack';
 	import { LuCircleAlert } from 'svelte-icons-pack/lu';
-	import { getAccessToken } from '$lib/stores/auth';
+	import { getAccessToken } from '$lib/stores/auth.svelte';
 
 	let error = $state('');
 	const formSchema = z.object({

@@ -3,13 +3,13 @@
 	import { z } from 'zod';
 	import { goto } from '$app/navigation';
 	import { Icon } from 'svelte-icons-pack';
-	import { LuCircleAlert, LuCircleCheck } from 'svelte-icons-pack/lu';
+	import { LuCircleAlert } from 'svelte-icons-pack/lu';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { superForm, defaults } from 'sveltekit-superforms';
 	import * as Form from '$components/ui/form';
 	import * as Alert from '$components/ui/alert';
 	import { Input } from '$components/ui/input/index.js';
-	import { login, authError } from '$lib/stores/auth';
+	import { login, authError } from '$lib/stores/auth.svelte';
 	import { buttonVariants } from '$components/ui/button';
 	
 	import { toast } from "svelte-sonner";
@@ -82,7 +82,7 @@
 		</Form.Field>
 		<Form.Button class="w-full mt-2">Sign in</Form.Button>
 	</form>
-	{#if $authError === 'UNAUTHENTICATED'}
+	{#if authError.error === 'UNAUTHENTICATED'}
 		<Alert.Root variant="destructive" class="mt-4">
 			<Icon src={LuCircleAlert} className="h-4 w-4" />
 			<Alert.Title>Error</Alert.Title>

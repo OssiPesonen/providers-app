@@ -4,7 +4,7 @@
 	import { LuLogOut, LuMoon } from 'svelte-icons-pack/lu';
 	import { Switch } from '$components/ui/switch';
 	import { buttonVariants } from '$components/ui/button';
-	import { isAuthenticated } from '$lib/stores/auth';
+	import { isAuthenticated } from '$lib/stores/auth.svelte';
 
 	let isAuthed = isAuthenticated();
 </script>

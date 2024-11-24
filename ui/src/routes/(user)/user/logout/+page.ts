@@ -1,4 +1,4 @@
-import { logout } from '$lib/stores/auth';
+import { logout } from '$lib/stores/auth.svelte';
 import type { PageLoad } from './$types';
 import { goto } from '$app/navigation';
 

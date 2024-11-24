@@ -2,22 +2,22 @@
 	import Spinner from '$components/ui/spinner/spinner.svelte';
 	import { onMount } from 'svelte';
 	import UserAuthForm from './components/sign-in-form.svelte';
-	import { isAuthenticated } from '$lib/stores/auth';
+	import { isAuthenticated } from '$lib/stores/auth.svelte';
 	import { goto } from '$app/navigation';
 
 	// Assume users are authenticated
-	let authenticated = $state(true);
+	let isUserLoggedIn = $state(true);
 
 	onMount(async () => {
-		if (await isAuthenticated()) {
+		if (isAuthenticated()) {
 			goto('/');
 		} else {
-			authenticated = false;
+			isUserLoggedIn = false;
 		}
 	});
 </script>
 
-{#if !authenticated }
+{#if !isUserLoggedIn }
 	<div
 		class="container relative h-screen flex-col items-center justify-center grid lg:max-w-none grid-cols-1 lg:grid-cols-2 lg:px-0"
 	>

@@ -7,7 +7,7 @@
 	import * as Alert from '$components/ui/alert';
 	import { Input } from '$components/ui/input/index.js';
 	import { buttonVariants } from '$components/ui/button';
-	import { authError, register } from '$lib/stores/auth';
+	import { authError, register } from '$lib/stores/auth.svelte';
 	import { LuCircleAlert } from 'svelte-icons-pack/lu';
 	import { Icon } from 'svelte-icons-pack';
 
@@ -91,7 +91,7 @@
 		</Form.Field>
 		<Form.Button class="w-full mt-2">Create account</Form.Button>
 	</form>
-	{#if $authError === 'INTERNAL'}
+	{#if authError.error === 'INTERNAL'}
 		<Alert.Root variant="destructive" class="mt-4">
 			<Icon src={LuCircleAlert} className="h-4 w-4" />
 			<Alert.Title>Error</Alert.Title>

@@ -5,15 +5,17 @@
 	import { Toaster } from '$components/ui/sonner';
 	import Nav from '$components/ui/nav/nav.svelte';
 	import Spinner from '$components/ui/spinner/spinner.svelte';
-	import { isAuthenticated } from '$lib/stores/auth';
+	import { isAuthenticated } from '$lib/stores/auth.svelte';
 	import '$css/globals.css';
 
 	let { children }: { children: Snippet } = $props();
+	let isUserLoggedIn = $state(false);
 
-	let userLoggedIn = isAuthenticated();
 	onMount(() => {
-		if (!userLoggedIn) {
+		if (!isAuthenticated()) {
 			goto('/');
+		} else {
+			isUserLoggedIn = true;
 		}
 	});
 </script>
@@ -21,7 +23,7 @@
 <div id="root">
 	<Toaster />
 	<ModeWatcher />
-	{#if userLoggedIn}
+	{#if isUserLoggedIn}
 		{#if $mode === 'dark'}
 			<div class="fixed top-0 left-0 bottom-0 right-0 -z-30 h-full w-full bg-slate-950">
 				<div

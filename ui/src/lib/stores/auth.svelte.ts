@@ -1,10 +1,9 @@
-import { readonly, writable } from 'svelte/store';
 import { jwtDecode } from 'jwt-decode';
 import type { RpcError } from 'grpc-web';
 import { apiClient } from '$lib/api/client';
 import { getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem } from '$lib/utils/localStorage.util';
 
-const error = writable('');
+let error = $state('');
 const accessTokenCacheKey = 'access-token';
 const refreshTokenCacheKey = 'refresh-token';
 
@@ -17,7 +16,7 @@ const isTokenStillValid = (token: string) => {
 };
 
 const refreshToken = async () => {
-	error.set('');
+	error = '';
 
 	const refreshToken = getLocalStorageItem(refreshTokenCacheKey);
 	if (!refreshToken) {
@@ -50,7 +49,7 @@ export const getAccessToken = () => {
 };
 
 export const login = async (email: string, password: string) => {
-	error.set('');
+	error = '';
 
 	try {
 		const client = apiClient();
@@ -64,13 +63,13 @@ export const login = async (email: string, password: string) => {
 		return true;
 	} catch (e) {
 		const rpcError = e as RpcError;
-		error.set(rpcError.code.toString());
+		error = rpcError.code.toString();
 		return false;
 	}
 };
 
 export const logout = async () => {
-	error.set('');
+	error = '';
 	const client = apiClient();
 	
 	const refreshToken = getLocalStorageItem(refreshTokenCacheKey);
@@ -91,7 +90,7 @@ export const logout = async () => {
 };
 
 export const register = async (email: string, password: string) => {
-	error.set('');
+	error = '';
 	try {
 		const client = apiClient();
 		const { status } = await client.registerUser({
@@ -104,11 +103,16 @@ export const register = async (email: string, password: string) => {
 	} catch (e) {
 		// This should only occur with network errors, or internal server errors
 		const rpcError = e as RpcError;
-		error.set(rpcError.code.toString());
+		error = rpcError.code.toString();
 		return false;
 	}
 };
 
 
 export const isAuthenticated = () => getAccessToken() !== '';
-export const authError = readonly(error);
+// Don't allow components to mutate errors
+export const authError = {
+	get error() {
+		return error
+	}
+}
