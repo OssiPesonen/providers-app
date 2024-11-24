@@ -1,4 +1,4 @@
-module github.com/ossipesonen/go-traffic-lights
+module github.com/ossipesonen/providers-app
 
 go 1.23.2
 

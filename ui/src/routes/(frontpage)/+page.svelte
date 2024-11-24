@@ -1,22 +1,23 @@
 <script lang="ts">
-	import type { PageData } from '../$types';
+	import { Icon } from 'svelte-icons-pack';
+	import type { PageData } from './$types';
 	import * as Card from '$components/ui/card';
-	import Input from '$components/ui/input/input.svelte';
+	import { Input } from '$components/ui/input';
 	import { Button } from '$components/ui/button';
 	import { LuSearch } from 'svelte-icons-pack/lu';
-	import { Icon } from 'svelte-icons-pack';
+
 	let { data }: { data: PageData } = $props();
 </script>
 
 <div class="page">
 	<div class="w-screen max-w-5xl">
 		<h1 class="text-center font-black text-4xl md:text-7xl mb-8 pt-16">providers.app</h1>
-		<p class="md:text-xl font- text-center pb-4 dark:text-slate-400 text-slate-500">
+		<p class="md:text-xl font- text-center pb-4 dark:text-slate-400 text-slate-700">
 			Search for service providers in your area!
 		</p>
-		<p class="text-sm text-slate-600 text-center pb-8">
-			Find service providers to see their availability. Consultants, therapists, instructors,
-			coaches, you name it!
+		<p class="text-sm dark:text-slate-500 text-slate-600 text-center pb-8">
+			Find service providers near you, and see their availability. Consultants, teachers,
+			instructors, coaches, you name it!
 		</p>
 		<div class="flex space-x-4 max-w-xl m-auto mb-10">
 			<Input

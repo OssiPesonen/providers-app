@@ -2,9 +2,11 @@ package server
 
 import (
 	"context"
+	"strconv"
 
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
-	pb "github.com/ossipesonen/go-traffic-lights/proto"
+	"github.com/ossipesonen/providers-app/internal/app/core/models"
+	"github.com/ossipesonen/providers-app/internal/server/interceptor"
+	pb "github.com/ossipesonen/providers-app/proto"
 	"github.com/upper/db/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -61,10 +63,21 @@ func (s *Server) ReadProvider(ctx context.Context, in *pb.ReadProviderRequest) (
 }
 
 func (s *Server) CreateProvider(ctx context.Context, in *pb.CreateProviderRequest) (*pb.CreateProviderResponse, error) {
+	userId := ctx.Value(interceptor.UserIdKey).(string)
+	if userId == "" {
+		return nil, status.Error(codes.FailedPrecondition, "user ID was not determined")
+	}
+
+	intUserId, err := strconv.Atoi(userId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Something went wrong. Please try again later.")
+	}
+
 	providerId, err := s.App.Services.Provider.CreateProvider(&models.Provider{
 		Name:   in.Name,
 		City:   in.City,
 		Region: in.Region,
+		UserId: intUserId,
 	})
 
 	if err != nil {

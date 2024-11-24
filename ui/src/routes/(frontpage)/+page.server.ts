@@ -1,4 +1,4 @@
-import type { PageLoad } from './$types';
+import type { PageServerLoad } from './$types';
 import { Empty } from '$lib/proto/google/protobuf/empty';
 import { apiClient } from '$lib/api/client';
 
@@ -10,7 +10,7 @@ export type Provider = {
     lineOfBusiness: string;
 };
 
-export const load: PageLoad = async (): Promise<{providers: Provider[]}> => {
+export const load: PageServerLoad = async (): Promise<{providers: Provider[]}> => {
     let providers: Provider[] = [];
     const client = apiClient();
 
@@ -23,6 +23,6 @@ export const load: PageLoad = async (): Promise<{providers: Provider[]}> => {
     }
 
 	return {
-		providers,
+		providers: JSON.parse(JSON.stringify(providers)),
 	};
 };

@@ -1,6 +1,7 @@
 # Simple Makefile for a Go project
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
+
 build-api:
 	@echo "Building..."
 	@cd api; go build -o bin/main cmd/main.go
@@ -11,11 +12,13 @@ build-api-win:
 	@cd api; go build -o bin/main.exe cmd/main.go
 	@echo "-- Build done. You can find the executable in api/bin/"
 
+dev-server: docker-up dev-api
+
 # Run the Go application
 dev-api:
 	@cd api; go run cmd/main.go
 
-dev-ui:
+dev-client:
 	@cd ui; npm run dev
 
 gen-proto: gen-proto-client gen-proto-api
@@ -24,7 +27,7 @@ gen-proto: gen-proto-client gen-proto-api
 gen-proto-client:
 	@rm -rf ui/src/lib/proto
 	@mkdir -p ui/src/lib/proto
-	@cd ui; npx protoc --ts_out src/lib/proto --proto_path $(ROOT_DIR)/proto $(ROOT_DIR)/proto/traffic_lights_service.proto
+	@cd ui; npx protoc --ts_out src/lib/proto --proto_path $(ROOT_DIR)/proto $(ROOT_DIR)/proto/providers_app_service.proto
 	@echo "-- Protocol buffer messages compiled for client"
 
 # Generate protocol buffer files for Go (API)
@@ -34,16 +37,16 @@ gen-proto-api:
 	--go_opt=paths=source_relative \
     --go-grpc_out=api \
 	--go-grpc_opt=paths=source_relative \
-    proto/traffic_lights_service.proto
+    proto/providers_app_service.proto
 	@echo "-- Protocol buffer messages compiled for API"
 
 # Create DB container
 docker-up:
-	@if docker compose -f docker/docker-compose.yml --env-file api/.env up --build 2>/dev/null; then \
+	@if docker compose -f docker/docker-compose.yml --env-file api/.env up -d --build 2>/dev/null; then \
 		: ; \
 	else \
 		echo "-- Falling back to Docker Compose V1"; \
-		docker-compose -f docker/docker-compose.yml --env-file api/.env up --build; \
+		docker-compose -f docker/docker-compose.yml --env-file api/.env up -d --build; \
 	fi
 
 # Shutdown DB container

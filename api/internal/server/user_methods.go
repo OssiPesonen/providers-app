@@ -4,9 +4,9 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
-	"github.com/ossipesonen/go-traffic-lights/internal/server/interceptor"
-	pb "github.com/ossipesonen/go-traffic-lights/proto"
+	"github.com/ossipesonen/providers-app/internal/app/core/models"
+	"github.com/ossipesonen/providers-app/internal/server/interceptor"
+	pb "github.com/ossipesonen/providers-app/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -31,7 +31,7 @@ func (s *Server) GetToken(ctx context.Context, in *pb.LoginRequest) (*pb.TokenRe
 
 	return &pb.TokenResponse{
 		AccessToken:  tokens.AccessToken,
-		RefreshToken: &tokens.RefreshToken,
+		RefreshToken: tokens.RefreshToken,
 		Exp:          3600,
 		TokenType:    "Bearer",
 	}, nil
@@ -74,7 +74,7 @@ func (s *Server) RefreshToken(ctx context.Context, in *pb.RefreshTokenRequest) (
 
 	return &pb.TokenResponse{
 		AccessToken:  tokens.AccessToken,
-		RefreshToken: &tokens.RefreshToken,
+		RefreshToken: tokens.RefreshToken,
 		Exp:          3600,
 		TokenType:    "Bearer",
 	}, nil

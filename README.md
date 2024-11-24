@@ -1,4 +1,4 @@
-# Project traffic-lights
+# Project providers.app
 
 This is a hobby application that has taken it's inspiration from the lights you see next to an exam room (green, yellow, red). The idea is to provide a platform for service providers that take on clients to let people know if they have capacity, if they might have capacity (can be contacted) or they are fully booked. Users should be able to list service providers in a specific location, for a specific service.
 

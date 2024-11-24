@@ -33,27 +33,17 @@ const refreshToken = async () => {
 
 		setLocalStorageItem(accessTokenCacheKey, r.accessToken);
 		setLocalStorageItem(refreshTokenCacheKey, r.refreshToken);
-		return true;
-	} catch (e) {
-		console.debug('token refresh failed');
-		const rpcError = e as RpcError;
-		error.set(rpcError.code.toString());
-		return false;
+	} catch{
+		await logout();
 	}
 };
 
-export const getAccessToken = async () => {
+export const getAccessToken = () => {
 	const token: string = getLocalStorageItem(accessTokenCacheKey);
 	
 	// Token in cache but has expired
 	if (token && !isTokenStillValid(token)) {
-		// Attempt a refresh
-		const success = await refreshToken();
-		if (!success) {
-			await logout();
-		}
-
-		return getLocalStorageItem(accessTokenCacheKey);
+		refreshToken()
 	}
 
 	return token;
@@ -120,5 +110,5 @@ export const register = async (email: string, password: string) => {
 };
 
 
-export const isAuthenticated = async (): Promise<boolean> => await getAccessToken() !== '';
+export const isAuthenticated = () => getAccessToken() !== '';
 export const authError = readonly(error);

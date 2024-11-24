@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-option go_package = "github.com/ossipesonen/go-traffic-lights";
+option go_package = "github.com/ossipesonen/providers-app";
 
 package proto;
 
 import "google/protobuf/empty.proto";
 
-service TrafficLightsService {
+service ProvidersAppService {
     // Providers
     rpc ListProviders (google.protobuf.Empty) returns (ListProviderResponse) {}
     rpc ReadProvider (ReadProviderRequest) returns (ReadProviderResponse) {}

@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/ossipesonen/go-traffic-lights/pkg/password"
+	"github.com/ossipesonen/providers-app/pkg/password"
 )
 
 type IssuedTokens struct {
@@ -37,7 +37,7 @@ func New(secret string) (*Auth, error) {
 func (s *Auth) IssueToken(userID int) (*IssuedTokens, error) {
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": strconv.Itoa(userID),                    // RFC defines "sub" should be string
-		"iss": "traffic-lights",                        // Todo: this should not be hard coded
+		"iss": "providers-app",                         // Todo: this should not be hard coded
 		"exp": time.Now().Add(time.Minute * 60).Unix(), // 60 min
 	}, nil)
 

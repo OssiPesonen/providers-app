@@ -1,4 +1,4 @@
-import { TrafficLightsServiceClient } from "$lib/proto/traffic_lights_service.client";
+import { ProvidersAppServiceClient } from "$lib/proto/providers_app_service.client";
 import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport";
 
 export const apiClient = () => {
@@ -6,5 +6,5 @@ export const apiClient = () => {
         baseUrl: "http://localhost:8080"
     });
 
-    return new TrafficLightsServiceClient(transport);
+    return new ProvidersAppServiceClient(transport);
 }

@@ -3,12 +3,12 @@ package app
 import (
 	"log"
 
-	"github.com/ossipesonen/go-traffic-lights/internal/app/auth"
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core/providers"
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core/users"
-	"github.com/ossipesonen/go-traffic-lights/internal/config"
-	"github.com/ossipesonen/go-traffic-lights/pkg/database"
+	"github.com/ossipesonen/providers-app/internal/app/auth"
+	"github.com/ossipesonen/providers-app/internal/app/core/models"
+	"github.com/ossipesonen/providers-app/internal/app/core/providers"
+	"github.com/ossipesonen/providers-app/internal/app/core/users"
+	"github.com/ossipesonen/providers-app/internal/config"
+	"github.com/ossipesonen/providers-app/pkg/database"
 )
 
 // Define the APIs for components

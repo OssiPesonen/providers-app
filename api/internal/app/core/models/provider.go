@@ -7,4 +7,5 @@ type Provider struct {
 	Region         string `db:"region"`
 	LineOfBusiness string `db:"line_of_business"`
 	Keywords       string `db:"keywords"`
+	UserId         int    `db:"userId"`
 }

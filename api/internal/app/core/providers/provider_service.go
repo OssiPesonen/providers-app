@@ -3,8 +3,8 @@ package providers
 import (
 	"log"
 
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core"
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
+	"github.com/ossipesonen/providers-app/internal/app/core"
+	"github.com/ossipesonen/providers-app/internal/app/core/models"
 	"github.com/upper/db/v4"
 )
 

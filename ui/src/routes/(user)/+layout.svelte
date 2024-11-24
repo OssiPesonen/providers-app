@@ -6,7 +6,7 @@
 	let { children } = $props();
 </script>
 
-<div id="root">
+<div>
 	<Toaster />
 	<ModeWatcher />
 	{#if $mode === 'dark'}

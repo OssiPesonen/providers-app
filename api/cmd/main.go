@@ -6,8 +6,8 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/ossipesonen/go-traffic-lights/internal/config"
-	"github.com/ossipesonen/go-traffic-lights/internal/server"
+	"github.com/ossipesonen/providers-app/internal/config"
+	"github.com/ossipesonen/providers-app/internal/server"
 )
 
 func main() {

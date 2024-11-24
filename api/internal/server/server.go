@@ -7,13 +7,13 @@ import (
 	"net"
 
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/ossipesonen/go-traffic-lights/internal/app"
-	"github.com/ossipesonen/go-traffic-lights/internal/app/auth"
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core"
-	"github.com/ossipesonen/go-traffic-lights/internal/config"
-	"github.com/ossipesonen/go-traffic-lights/internal/server/interceptor"
-	"github.com/ossipesonen/go-traffic-lights/pkg/database"
-	pb "github.com/ossipesonen/go-traffic-lights/proto"
+	"github.com/ossipesonen/providers-app/internal/app"
+	"github.com/ossipesonen/providers-app/internal/app/auth"
+	"github.com/ossipesonen/providers-app/internal/app/core"
+	"github.com/ossipesonen/providers-app/internal/config"
+	"github.com/ossipesonen/providers-app/internal/server/interceptor"
+	"github.com/ossipesonen/providers-app/pkg/database"
+	pb "github.com/ossipesonen/providers-app/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
@@ -22,7 +22,7 @@ import (
 
 // Server must implement TrafficLightsServiceClient interface
 type Server struct {
-	pb.UnimplementedTrafficLightsServiceServer
+	pb.UnimplementedProvidersAppServiceServer
 	Logger *log.Logger
 	App    *app.App
 	Auth   *auth.Auth
@@ -66,7 +66,7 @@ func New(config *config.Config, logger *log.Logger) *grpc.Server {
 
 	app := app.New(config, db, logger)
 
-	pb.RegisterTrafficLightsServiceServer(s, &Server{
+	pb.RegisterProvidersAppServiceServer(s, &Server{
 		Logger: logger,
 		App:    app,
 		Auth:   auth,

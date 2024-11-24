@@ -3,8 +3,8 @@ package users
 import (
 	"log"
 
-	"github.com/ossipesonen/go-traffic-lights/internal/app/core/models"
-	"github.com/ossipesonen/go-traffic-lights/pkg/database"
+	"github.com/ossipesonen/providers-app/internal/app/core/models"
+	"github.com/ossipesonen/providers-app/pkg/database"
 )
 
 type UserRepository struct {
