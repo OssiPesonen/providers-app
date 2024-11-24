@@ -1,16 +1,35 @@
 <script lang="ts">
 	// Todo: Fetch account info here and display it
 	// allow editing info via another page
+	import * as Table from '$components/ui/table';
+	import { user } from '$lib/stores/user.svelte';
 
-	import { LuConstruction } from "svelte-icons-pack/lu";
-	import { Icon } from "svelte-icons-pack"
-
+	const providers = user.info?.providerAccounts;
 </script>
 
 <div class="w-full h-screen flex items-center justify-center">
-	<div class="w-full max-w-3xl text-center">
-		<h1 class="tracking-tight">Account</h1>
-		<Icon src={LuConstruction} className="h-24 w-24 m-auto mb-8" color="hsl(215, 16%, 47%)" />
-		<p class="pb-8 text-muted-foreground text-md">This page is supposed to display your account information. It is still under construction</p>
+	<div class="w-full max-w-5xl">
+		<h1 class="tracking-tight">My account</h1>
+		<h3>Providers</h3>
+		{#if providers}
+			<Table.Root>
+				<Table.Header>
+					<Table.Row>
+						<Table.Head class="">Name</Table.Head>
+						<Table.Head>Area</Table.Head>
+						<Table.Head>Line of Business</Table.Head>
+					</Table.Row>
+				</Table.Header>
+				<Table.Body>
+					{#each providers as provider, i (i)}
+						<Table.Row>
+							<Table.Cell class="font-medium">{provider.name}</Table.Cell>
+							<Table.Cell>{provider.city}, { provider.region }</Table.Cell>
+							<Table.Cell>{provider.lineOfBusiness}</Table.Cell>
+						</Table.Row>
+					{/each}
+				</Table.Body>
+			</Table.Root>
+		{/if}
 	</div>
 </div>

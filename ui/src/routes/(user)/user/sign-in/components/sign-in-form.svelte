@@ -13,6 +13,7 @@
 	import { buttonVariants } from '$components/ui/button';
 	
 	import { toast } from "svelte-sonner";
+	import { getUserInfo } from '$lib/stores/user.svelte';
 
 	const formSchema = z.object({
 		email: z.string().email(),
@@ -59,6 +60,7 @@
 
 		// Only track success as error is already being subscribed to
 		if (success) {
+			getUserInfo();
 			return await goto('/');
 		}
 	}
