@@ -92,8 +92,8 @@ func (s *UserService) CreateUser(userInfo *models.UserInfo) (*models.User, error
 
 func (s *UserService) Find(userId int) (*models.User, error) {
 	user, err := s.repository.Read(userId)
-
 	if err != nil {
+		s.logger.Printf("Reading user from db failed: %v", err)
 		return nil, core.NewError(core.ErrInternal, err)
 	}
 

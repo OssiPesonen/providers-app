@@ -30,9 +30,22 @@ func NewProviderRepository(db database.Database, logger *log.Logger) *ProviderRe
 	}
 }
 
+// List all providers in the system
+// Todo: implement pagination and limits
 func (p *ProviderRepository) List() (*[]models.Provider, error) {
 	providers := []models.Provider{}
 	q := p.db.Handle().SQL().Select("id", "name", "city", "region", "line_of_business").From("providers")
+	if err := q.All(&providers); err != nil {
+		return nil, err
+	}
+
+	return &providers, nil
+}
+
+// List providers using user ID as the filter condition
+func (p *ProviderRepository) listForUser(userId int) (*[]models.Provider, error) {
+	providers := []models.Provider{}
+	q := p.db.Handle().SQL().Select("id", "name", "city", "region", "line_of_business").From("providers").Where("\"userId\" = ?", userId)
 	if err := q.All(&providers); err != nil {
 		return nil, err
 	}

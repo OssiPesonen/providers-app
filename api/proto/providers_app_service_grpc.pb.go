@@ -24,6 +24,7 @@ const (
 	ProvidersAppService_ReadProvider_FullMethodName           = "/proto.ProvidersAppService/ReadProvider"
 	ProvidersAppService_CreateProvider_FullMethodName         = "/proto.ProvidersAppService/CreateProvider"
 	ProvidersAppService_GetToken_FullMethodName               = "/proto.ProvidersAppService/GetToken"
+	ProvidersAppService_GetUserInfo_FullMethodName            = "/proto.ProvidersAppService/GetUserInfo"
 	ProvidersAppService_RegisterUser_FullMethodName           = "/proto.ProvidersAppService/RegisterUser"
 	ProvidersAppService_RefreshToken_FullMethodName           = "/proto.ProvidersAppService/RefreshToken"
 	ProvidersAppService_RevokeRefreshToken_FullMethodName     = "/proto.ProvidersAppService/RevokeRefreshToken"
@@ -35,13 +36,14 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProvidersAppServiceClient interface {
 	// Providers
-	ListProviders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProviderResponse, error)
-	ReadProvider(ctx context.Context, in *ReadProviderRequest, opts ...grpc.CallOption) (*ReadProviderResponse, error)
-	CreateProvider(ctx context.Context, in *CreateProviderRequest, opts ...grpc.CallOption) (*CreateProviderResponse, error)
+	ListProviders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListOfProviders, error)
+	ReadProvider(ctx context.Context, in *ReadProviderRequest, opts ...grpc.CallOption) (*Provider, error)
+	CreateProvider(ctx context.Context, in *CreateProviderRequest, opts ...grpc.CallOption) (*ProviderId, error)
 	// Users
-	GetToken(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*TokenResponse, error)
+	GetToken(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Tokens, error)
+	GetUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfo, error)
 	RegisterUser(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*TokenResponse, error)
+	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*Tokens, error)
 	RevokeRefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	RevokeAllRefreshTokens(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -54,9 +56,9 @@ func NewProvidersAppServiceClient(cc grpc.ClientConnInterface) ProvidersAppServi
 	return &providersAppServiceClient{cc}
 }
 
-func (c *providersAppServiceClient) ListProviders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProviderResponse, error) {
+func (c *providersAppServiceClient) ListProviders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListOfProviders, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListProviderResponse)
+	out := new(ListOfProviders)
 	err := c.cc.Invoke(ctx, ProvidersAppService_ListProviders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -64,9 +66,9 @@ func (c *providersAppServiceClient) ListProviders(ctx context.Context, in *empty
 	return out, nil
 }
 
-func (c *providersAppServiceClient) ReadProvider(ctx context.Context, in *ReadProviderRequest, opts ...grpc.CallOption) (*ReadProviderResponse, error) {
+func (c *providersAppServiceClient) ReadProvider(ctx context.Context, in *ReadProviderRequest, opts ...grpc.CallOption) (*Provider, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ReadProviderResponse)
+	out := new(Provider)
 	err := c.cc.Invoke(ctx, ProvidersAppService_ReadProvider_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -74,9 +76,9 @@ func (c *providersAppServiceClient) ReadProvider(ctx context.Context, in *ReadPr
 	return out, nil
 }
 
-func (c *providersAppServiceClient) CreateProvider(ctx context.Context, in *CreateProviderRequest, opts ...grpc.CallOption) (*CreateProviderResponse, error) {
+func (c *providersAppServiceClient) CreateProvider(ctx context.Context, in *CreateProviderRequest, opts ...grpc.CallOption) (*ProviderId, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateProviderResponse)
+	out := new(ProviderId)
 	err := c.cc.Invoke(ctx, ProvidersAppService_CreateProvider_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -84,10 +86,20 @@ func (c *providersAppServiceClient) CreateProvider(ctx context.Context, in *Crea
 	return out, nil
 }
 
-func (c *providersAppServiceClient) GetToken(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*TokenResponse, error) {
+func (c *providersAppServiceClient) GetToken(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Tokens, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TokenResponse)
+	out := new(Tokens)
 	err := c.cc.Invoke(ctx, ProvidersAppService_GetToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *providersAppServiceClient) GetUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfo, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserInfo)
+	err := c.cc.Invoke(ctx, ProvidersAppService_GetUserInfo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -104,9 +116,9 @@ func (c *providersAppServiceClient) RegisterUser(ctx context.Context, in *Regist
 	return out, nil
 }
 
-func (c *providersAppServiceClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*TokenResponse, error) {
+func (c *providersAppServiceClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*Tokens, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TokenResponse)
+	out := new(Tokens)
 	err := c.cc.Invoke(ctx, ProvidersAppService_RefreshToken_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -139,13 +151,14 @@ func (c *providersAppServiceClient) RevokeAllRefreshTokens(ctx context.Context, 
 // for forward compatibility.
 type ProvidersAppServiceServer interface {
 	// Providers
-	ListProviders(context.Context, *emptypb.Empty) (*ListProviderResponse, error)
-	ReadProvider(context.Context, *ReadProviderRequest) (*ReadProviderResponse, error)
-	CreateProvider(context.Context, *CreateProviderRequest) (*CreateProviderResponse, error)
+	ListProviders(context.Context, *emptypb.Empty) (*ListOfProviders, error)
+	ReadProvider(context.Context, *ReadProviderRequest) (*Provider, error)
+	CreateProvider(context.Context, *CreateProviderRequest) (*ProviderId, error)
 	// Users
-	GetToken(context.Context, *LoginRequest) (*TokenResponse, error)
+	GetToken(context.Context, *LoginRequest) (*Tokens, error)
+	GetUserInfo(context.Context, *emptypb.Empty) (*UserInfo, error)
 	RegisterUser(context.Context, *RegistrationRequest) (*emptypb.Empty, error)
-	RefreshToken(context.Context, *RefreshTokenRequest) (*TokenResponse, error)
+	RefreshToken(context.Context, *RefreshTokenRequest) (*Tokens, error)
 	RevokeRefreshToken(context.Context, *RefreshTokenRequest) (*emptypb.Empty, error)
 	RevokeAllRefreshTokens(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedProvidersAppServiceServer()
@@ -158,22 +171,25 @@ type ProvidersAppServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedProvidersAppServiceServer struct{}
 
-func (UnimplementedProvidersAppServiceServer) ListProviders(context.Context, *emptypb.Empty) (*ListProviderResponse, error) {
+func (UnimplementedProvidersAppServiceServer) ListProviders(context.Context, *emptypb.Empty) (*ListOfProviders, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListProviders not implemented")
 }
-func (UnimplementedProvidersAppServiceServer) ReadProvider(context.Context, *ReadProviderRequest) (*ReadProviderResponse, error) {
+func (UnimplementedProvidersAppServiceServer) ReadProvider(context.Context, *ReadProviderRequest) (*Provider, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadProvider not implemented")
 }
-func (UnimplementedProvidersAppServiceServer) CreateProvider(context.Context, *CreateProviderRequest) (*CreateProviderResponse, error) {
+func (UnimplementedProvidersAppServiceServer) CreateProvider(context.Context, *CreateProviderRequest) (*ProviderId, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProvider not implemented")
 }
-func (UnimplementedProvidersAppServiceServer) GetToken(context.Context, *LoginRequest) (*TokenResponse, error) {
+func (UnimplementedProvidersAppServiceServer) GetToken(context.Context, *LoginRequest) (*Tokens, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
+}
+func (UnimplementedProvidersAppServiceServer) GetUserInfo(context.Context, *emptypb.Empty) (*UserInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
 }
 func (UnimplementedProvidersAppServiceServer) RegisterUser(context.Context, *RegistrationRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterUser not implemented")
 }
-func (UnimplementedProvidersAppServiceServer) RefreshToken(context.Context, *RefreshTokenRequest) (*TokenResponse, error) {
+func (UnimplementedProvidersAppServiceServer) RefreshToken(context.Context, *RefreshTokenRequest) (*Tokens, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
 func (UnimplementedProvidersAppServiceServer) RevokeRefreshToken(context.Context, *RefreshTokenRequest) (*emptypb.Empty, error) {
@@ -275,6 +291,24 @@ func _ProvidersAppService_GetToken_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProvidersAppService_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProvidersAppServiceServer).GetUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProvidersAppService_GetUserInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProvidersAppServiceServer).GetUserInfo(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProvidersAppService_RegisterUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RegistrationRequest)
 	if err := dec(in); err != nil {
@@ -369,6 +403,10 @@ var ProvidersAppService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetToken",
 			Handler:    _ProvidersAppService_GetToken_Handler,
+		},
+		{
+			MethodName: "GetUserInfo",
+			Handler:    _ProvidersAppService_GetUserInfo_Handler,
 		},
 		{
 			MethodName: "RegisterUser",

@@ -24,9 +24,9 @@ export interface ReadProviderRequest {
     id: number;
 }
 /**
- * @generated from protobuf message proto.ReadProviderResponse
+ * @generated from protobuf message proto.Provider
  */
-export interface ReadProviderResponse {
+export interface Provider {
     /**
      * @generated from protobuf field: int32 id = 1;
      */
@@ -70,22 +70,22 @@ export interface CreateProviderRequest {
     lineOfBusiness: string;
 }
 /**
- * @generated from protobuf message proto.CreateProviderResponse
+ * @generated from protobuf message proto.ProviderId
  */
-export interface CreateProviderResponse {
+export interface ProviderId {
     /**
      * @generated from protobuf field: int32 id = 1;
      */
     id: number;
 }
 /**
- * @generated from protobuf message proto.ListProviderResponse
+ * @generated from protobuf message proto.ListOfProviders
  */
-export interface ListProviderResponse {
+export interface ListOfProviders {
     /**
-     * @generated from protobuf field: repeated proto.ReadProviderResponse providers = 1;
+     * @generated from protobuf field: repeated proto.Provider providers = 1;
      */
-    providers: ReadProviderResponse[];
+    providers: Provider[];
 }
 /**
  * User messages
@@ -129,9 +129,9 @@ export interface LoginRequest {
     password: string;
 }
 /**
- * @generated from protobuf message proto.TokenResponse
+ * @generated from protobuf message proto.Tokens
  */
-export interface TokenResponse {
+export interface Tokens {
     /**
      * @generated from protobuf field: string access_token = 1;
      */
@@ -152,6 +152,23 @@ export interface TokenResponse {
      * @generated from protobuf field: optional string scope = 5;
      */
     scope?: string;
+}
+/**
+ * @generated from protobuf message proto.UserInfo
+ */
+export interface UserInfo {
+    /**
+     * @generated from protobuf field: int32 id = 1;
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: string email = 2;
+     */
+    email: string;
+    /**
+     * @generated from protobuf field: repeated proto.Provider providerAccounts = 3;
+     */
+    providerAccounts: Provider[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ReadProviderRequest$Type extends MessageType<ReadProviderRequest> {
@@ -201,9 +218,9 @@ class ReadProviderRequest$Type extends MessageType<ReadProviderRequest> {
  */
 export const ReadProviderRequest = new ReadProviderRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ReadProviderResponse$Type extends MessageType<ReadProviderResponse> {
+class Provider$Type extends MessageType<Provider> {
     constructor() {
-        super("proto.ReadProviderResponse", [
+        super("proto.Provider", [
             { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "city", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -211,7 +228,7 @@ class ReadProviderResponse$Type extends MessageType<ReadProviderResponse> {
             { no: 5, name: "line_of_business", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<ReadProviderResponse>): ReadProviderResponse {
+    create(value?: PartialMessage<Provider>): Provider {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.name = "";
@@ -219,10 +236,10 @@ class ReadProviderResponse$Type extends MessageType<ReadProviderResponse> {
         message.region = "";
         message.lineOfBusiness = "";
         if (value !== undefined)
-            reflectionMergePartial<ReadProviderResponse>(this, message, value);
+            reflectionMergePartial<Provider>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReadProviderResponse): ReadProviderResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Provider): Provider {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -253,7 +270,7 @@ class ReadProviderResponse$Type extends MessageType<ReadProviderResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: ReadProviderResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: Provider, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int32 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int32(message.id);
@@ -276,9 +293,9 @@ class ReadProviderResponse$Type extends MessageType<ReadProviderResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message proto.ReadProviderResponse
+ * @generated MessageType for protobuf message proto.Provider
  */
-export const ReadProviderResponse = new ReadProviderResponse$Type();
+export const Provider = new Provider$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateProviderRequest$Type extends MessageType<CreateProviderRequest> {
     constructor() {
@@ -351,20 +368,20 @@ class CreateProviderRequest$Type extends MessageType<CreateProviderRequest> {
  */
 export const CreateProviderRequest = new CreateProviderRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateProviderResponse$Type extends MessageType<CreateProviderResponse> {
+class ProviderId$Type extends MessageType<ProviderId> {
     constructor() {
-        super("proto.CreateProviderResponse", [
+        super("proto.ProviderId", [
             { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
-    create(value?: PartialMessage<CreateProviderResponse>): CreateProviderResponse {
+    create(value?: PartialMessage<ProviderId>): ProviderId {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         if (value !== undefined)
-            reflectionMergePartial<CreateProviderResponse>(this, message, value);
+            reflectionMergePartial<ProviderId>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateProviderResponse): CreateProviderResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ProviderId): ProviderId {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -383,7 +400,7 @@ class CreateProviderResponse$Type extends MessageType<CreateProviderResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: CreateProviderResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ProviderId, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int32 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int32(message.id);
@@ -394,30 +411,30 @@ class CreateProviderResponse$Type extends MessageType<CreateProviderResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message proto.CreateProviderResponse
+ * @generated MessageType for protobuf message proto.ProviderId
  */
-export const CreateProviderResponse = new CreateProviderResponse$Type();
+export const ProviderId = new ProviderId$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListProviderResponse$Type extends MessageType<ListProviderResponse> {
+class ListOfProviders$Type extends MessageType<ListOfProviders> {
     constructor() {
-        super("proto.ListProviderResponse", [
-            { no: 1, name: "providers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ReadProviderResponse }
+        super("proto.ListOfProviders", [
+            { no: 1, name: "providers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Provider }
         ]);
     }
-    create(value?: PartialMessage<ListProviderResponse>): ListProviderResponse {
+    create(value?: PartialMessage<ListOfProviders>): ListOfProviders {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.providers = [];
         if (value !== undefined)
-            reflectionMergePartial<ListProviderResponse>(this, message, value);
+            reflectionMergePartial<ListOfProviders>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListProviderResponse): ListProviderResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListOfProviders): ListOfProviders {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated proto.ReadProviderResponse providers */ 1:
-                    message.providers.push(ReadProviderResponse.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated proto.Provider providers */ 1:
+                    message.providers.push(Provider.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -430,10 +447,10 @@ class ListProviderResponse$Type extends MessageType<ListProviderResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: ListProviderResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated proto.ReadProviderResponse providers = 1; */
+    internalBinaryWrite(message: ListOfProviders, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated proto.Provider providers = 1; */
         for (let i = 0; i < message.providers.length; i++)
-            ReadProviderResponse.internalBinaryWrite(message.providers[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Provider.internalBinaryWrite(message.providers[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -441,9 +458,9 @@ class ListProviderResponse$Type extends MessageType<ListProviderResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message proto.ListProviderResponse
+ * @generated MessageType for protobuf message proto.ListOfProviders
  */
-export const ListProviderResponse = new ListProviderResponse$Type();
+export const ListOfProviders = new ListOfProviders$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class RefreshTokenRequest$Type extends MessageType<RefreshTokenRequest> {
     constructor() {
@@ -610,9 +627,9 @@ class LoginRequest$Type extends MessageType<LoginRequest> {
  */
 export const LoginRequest = new LoginRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class TokenResponse$Type extends MessageType<TokenResponse> {
+class Tokens$Type extends MessageType<Tokens> {
     constructor() {
-        super("proto.TokenResponse", [
+        super("proto.Tokens", [
             { no: 1, name: "access_token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "exp", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "token_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -620,17 +637,17 @@ class TokenResponse$Type extends MessageType<TokenResponse> {
             { no: 5, name: "scope", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<TokenResponse>): TokenResponse {
+    create(value?: PartialMessage<Tokens>): Tokens {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.accessToken = "";
         message.exp = 0;
         message.tokenType = "";
         message.refreshToken = "";
         if (value !== undefined)
-            reflectionMergePartial<TokenResponse>(this, message, value);
+            reflectionMergePartial<Tokens>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TokenResponse): TokenResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Tokens): Tokens {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -661,7 +678,7 @@ class TokenResponse$Type extends MessageType<TokenResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: TokenResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: Tokens, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string access_token = 1; */
         if (message.accessToken !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.accessToken);
@@ -684,19 +701,83 @@ class TokenResponse$Type extends MessageType<TokenResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message proto.TokenResponse
+ * @generated MessageType for protobuf message proto.Tokens
  */
-export const TokenResponse = new TokenResponse$Type();
+export const Tokens = new Tokens$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UserInfo$Type extends MessageType<UserInfo> {
+    constructor() {
+        super("proto.UserInfo", [
+            { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "providerAccounts", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Provider }
+        ]);
+    }
+    create(value?: PartialMessage<UserInfo>): UserInfo {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        message.email = "";
+        message.providerAccounts = [];
+        if (value !== undefined)
+            reflectionMergePartial<UserInfo>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserInfo): UserInfo {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 id */ 1:
+                    message.id = reader.int32();
+                    break;
+                case /* string email */ 2:
+                    message.email = reader.string();
+                    break;
+                case /* repeated proto.Provider providerAccounts */ 3:
+                    message.providerAccounts.push(Provider.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserInfo, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int32(message.id);
+        /* string email = 2; */
+        if (message.email !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.email);
+        /* repeated proto.Provider providerAccounts = 3; */
+        for (let i = 0; i < message.providerAccounts.length; i++)
+            Provider.internalBinaryWrite(message.providerAccounts[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message proto.UserInfo
+ */
+export const UserInfo = new UserInfo$Type();
 /**
  * @generated ServiceType for protobuf service proto.ProvidersAppService
  */
 export const ProvidersAppService = new ServiceType("proto.ProvidersAppService", [
-    { name: "ListProviders", options: {}, I: Empty, O: ListProviderResponse },
-    { name: "ReadProvider", options: {}, I: ReadProviderRequest, O: ReadProviderResponse },
-    { name: "CreateProvider", options: {}, I: CreateProviderRequest, O: CreateProviderResponse },
-    { name: "GetToken", options: {}, I: LoginRequest, O: TokenResponse },
+    { name: "ListProviders", options: {}, I: Empty, O: ListOfProviders },
+    { name: "ReadProvider", options: {}, I: ReadProviderRequest, O: Provider },
+    { name: "CreateProvider", options: {}, I: CreateProviderRequest, O: ProviderId },
+    { name: "GetToken", options: {}, I: LoginRequest, O: Tokens },
+    { name: "GetUserInfo", options: {}, I: Empty, O: UserInfo },
     { name: "RegisterUser", options: {}, I: RegistrationRequest, O: Empty },
-    { name: "RefreshToken", options: {}, I: RefreshTokenRequest, O: TokenResponse },
+    { name: "RefreshToken", options: {}, I: RefreshTokenRequest, O: Tokens },
     { name: "RevokeRefreshToken", options: {}, I: RefreshTokenRequest, O: Empty },
     { name: "RevokeAllRefreshTokens", options: {}, I: Empty, O: Empty }
 ]);

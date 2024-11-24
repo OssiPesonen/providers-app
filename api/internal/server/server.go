@@ -97,6 +97,8 @@ func (s *Server) FromError(err error) ServerError {
 		serviceError := serviceError.ServiceError()
 		serverError.Message = serviceError.Error()
 
+		s.Logger.Printf("Service error: %s", serverError.Message)
+
 		switch serviceError {
 		case core.ErrRevokedRefreshToken:
 			serverError.Code = codes.Unauthenticated

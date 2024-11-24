@@ -8,14 +8,15 @@ import "google/protobuf/empty.proto";
 
 service ProvidersAppService {
     // Providers
-    rpc ListProviders (google.protobuf.Empty) returns (ListProviderResponse) {}
-    rpc ReadProvider (ReadProviderRequest) returns (ReadProviderResponse) {}
-    rpc CreateProvider (CreateProviderRequest) returns (CreateProviderResponse) {}
+    rpc ListProviders (google.protobuf.Empty) returns (ListOfProviders) {}
+    rpc ReadProvider (ReadProviderRequest) returns (Provider) {}
+    rpc CreateProvider (CreateProviderRequest) returns (ProviderId) {}
 
     // Users
-    rpc GetToken(LoginRequest) returns (TokenResponse) {}
+    rpc GetToken(LoginRequest) returns (Tokens) {}
+    rpc GetUserInfo(google.protobuf.Empty) returns (UserInfo) {}
     rpc RegisterUser(RegistrationRequest) returns (google.protobuf.Empty) {}
-    rpc RefreshToken(RefreshTokenRequest) returns (TokenResponse) {}
+    rpc RefreshToken(RefreshTokenRequest) returns (Tokens) {}
     rpc RevokeRefreshToken(RefreshTokenRequest) returns (google.protobuf.Empty) {}
     rpc RevokeAllRefreshTokens(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }
@@ -25,7 +26,7 @@ message ReadProviderRequest {
     int32 id = 1;
 }
 
-message ReadProviderResponse {
+message Provider {
     int32 id = 1;
     string name = 2;
     string city = 3;
@@ -40,12 +41,12 @@ message CreateProviderRequest {
     string line_of_business = 5;
 }
 
-message CreateProviderResponse {
+message ProviderId {
     int32 id = 1;
 }
 
-message ListProviderResponse {
-    repeated ReadProviderResponse providers = 1;
+message ListOfProviders {
+    repeated Provider providers = 1;
 }
 
 // User messages
@@ -64,10 +65,16 @@ message LoginRequest {
     string password = 2;
 }
 
-message TokenResponse {
+message Tokens {
     string access_token = 1;
     int32 exp = 2;
     string token_type = 3;        
     string refresh_token = 4;
     optional string scope = 5;
+}
+
+message UserInfo {
+    int32 id = 1;
+    string email = 2;
+    repeated Provider providerAccounts = 3;
 }

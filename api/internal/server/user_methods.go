@@ -12,8 +12,47 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
+func (s *Server) GetUserInfo(ctx context.Context, _ *emptypb.Empty) (*pb.UserInfo, error) {
+	userId := ctx.Value(interceptor.UserIdKey).(string)
+	if userId == "" {
+		return nil, status.Error(codes.FailedPrecondition, "user ID was not determined")
+	}
+
+	userIdInt, _ := strconv.Atoi(userId)
+	providers, err := s.App.Services.Provider.ListProvidersForUser(userIdInt)
+	if err != nil {
+		e := s.FromError(err)
+		return nil, status.Error(e.Code, e.Message)
+	}
+
+	user, err := s.App.Services.User.Find(userIdInt)
+	if err != nil {
+		e := s.FromError(err)
+		return nil, status.Error(e.Code, e.Message)
+	}
+
+	providersSlice := []*pb.Provider{}
+	for _, result := range *providers {
+		p := pb.Provider{
+			Id:             int32(result.Id),
+			Name:           result.Name,
+			Region:         result.Region,
+			City:           result.City,
+			LineOfBusiness: result.LineOfBusiness,
+		}
+
+		providersSlice = append(providersSlice, &p)
+	}
+
+	return &pb.UserInfo{
+		Id:               int32(userIdInt),
+		Email:            user.Email,
+		ProviderAccounts: providersSlice,
+	}, nil
+}
+
 // List all commands available for server
-func (s *Server) GetToken(ctx context.Context, in *pb.LoginRequest) (*pb.TokenResponse, error) {
+func (s *Server) GetToken(ctx context.Context, in *pb.LoginRequest) (*pb.Tokens, error) {
 	user, err := s.App.Services.User.Authenticate(in.Email, in.Password)
 
 	if err != nil {
@@ -29,7 +68,7 @@ func (s *Server) GetToken(ctx context.Context, in *pb.LoginRequest) (*pb.TokenRe
 		return nil, status.Error(e.Code, "")
 	}
 
-	return &pb.TokenResponse{
+	return &pb.Tokens{
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,
 		Exp:          3600,
@@ -63,16 +102,15 @@ func (s *Server) RegisterUser(ctx context.Context, in *pb.RegistrationRequest) (
 	return &emptypb.Empty{}, nil
 }
 
-func (s *Server) RefreshToken(ctx context.Context, in *pb.RefreshTokenRequest) (*pb.TokenResponse, error) {
+func (s *Server) RefreshToken(ctx context.Context, in *pb.RefreshTokenRequest) (*pb.Tokens, error) {
 	tokens, err := s.App.Services.User.RefreshTokens(in.RefreshToken)
-
 	if err != nil {
 		s.Logger.Printf("something went wrong when attempting to revoke refresh token: %v", err)
 		e := s.FromError(err)
 		return nil, status.Error(e.Code, e.Message)
 	}
 
-	return &pb.TokenResponse{
+	return &pb.Tokens{
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,
 		Exp:          3600,

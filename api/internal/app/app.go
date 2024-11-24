@@ -35,6 +35,8 @@ type UserService interface {
 type ProviderService interface {
 	// Lists all providers
 	ListProviders() (*[]models.Provider, error)
+	// List providers for given user
+	ListProvidersForUser(userId int) (*[]models.Provider, error)
 	// Fetch a single provider using an identifier
 	// Returns the provider or error. Error can be sql.ErrnoRows,
 	// which indicates no resource found

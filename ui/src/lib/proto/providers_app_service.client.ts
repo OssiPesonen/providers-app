@@ -6,14 +6,15 @@ import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { ProvidersAppService } from "./providers_app_service";
 import type { RefreshTokenRequest } from "./providers_app_service";
 import type { RegistrationRequest } from "./providers_app_service";
-import type { TokenResponse } from "./providers_app_service";
+import type { UserInfo } from "./providers_app_service";
+import type { Tokens } from "./providers_app_service";
 import type { LoginRequest } from "./providers_app_service";
-import type { CreateProviderResponse } from "./providers_app_service";
+import type { ProviderId } from "./providers_app_service";
 import type { CreateProviderRequest } from "./providers_app_service";
-import type { ReadProviderResponse } from "./providers_app_service";
+import type { Provider } from "./providers_app_service";
 import type { ReadProviderRequest } from "./providers_app_service";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { ListProviderResponse } from "./providers_app_service";
+import type { ListOfProviders } from "./providers_app_service";
 import type { Empty } from "./google/protobuf/empty";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
@@ -24,31 +25,35 @@ export interface IProvidersAppServiceClient {
     /**
      * Providers
      *
-     * @generated from protobuf rpc: ListProviders(google.protobuf.Empty) returns (proto.ListProviderResponse);
+     * @generated from protobuf rpc: ListProviders(google.protobuf.Empty) returns (proto.ListOfProviders);
      */
-    listProviders(input: Empty, options?: RpcOptions): UnaryCall<Empty, ListProviderResponse>;
+    listProviders(input: Empty, options?: RpcOptions): UnaryCall<Empty, ListOfProviders>;
     /**
-     * @generated from protobuf rpc: ReadProvider(proto.ReadProviderRequest) returns (proto.ReadProviderResponse);
+     * @generated from protobuf rpc: ReadProvider(proto.ReadProviderRequest) returns (proto.Provider);
      */
-    readProvider(input: ReadProviderRequest, options?: RpcOptions): UnaryCall<ReadProviderRequest, ReadProviderResponse>;
+    readProvider(input: ReadProviderRequest, options?: RpcOptions): UnaryCall<ReadProviderRequest, Provider>;
     /**
-     * @generated from protobuf rpc: CreateProvider(proto.CreateProviderRequest) returns (proto.CreateProviderResponse);
+     * @generated from protobuf rpc: CreateProvider(proto.CreateProviderRequest) returns (proto.ProviderId);
      */
-    createProvider(input: CreateProviderRequest, options?: RpcOptions): UnaryCall<CreateProviderRequest, CreateProviderResponse>;
+    createProvider(input: CreateProviderRequest, options?: RpcOptions): UnaryCall<CreateProviderRequest, ProviderId>;
     /**
      * Users
      *
-     * @generated from protobuf rpc: GetToken(proto.LoginRequest) returns (proto.TokenResponse);
+     * @generated from protobuf rpc: GetToken(proto.LoginRequest) returns (proto.Tokens);
      */
-    getToken(input: LoginRequest, options?: RpcOptions): UnaryCall<LoginRequest, TokenResponse>;
+    getToken(input: LoginRequest, options?: RpcOptions): UnaryCall<LoginRequest, Tokens>;
+    /**
+     * @generated from protobuf rpc: GetUserInfo(google.protobuf.Empty) returns (proto.UserInfo);
+     */
+    getUserInfo(input: Empty, options?: RpcOptions): UnaryCall<Empty, UserInfo>;
     /**
      * @generated from protobuf rpc: RegisterUser(proto.RegistrationRequest) returns (google.protobuf.Empty);
      */
     registerUser(input: RegistrationRequest, options?: RpcOptions): UnaryCall<RegistrationRequest, Empty>;
     /**
-     * @generated from protobuf rpc: RefreshToken(proto.RefreshTokenRequest) returns (proto.TokenResponse);
+     * @generated from protobuf rpc: RefreshToken(proto.RefreshTokenRequest) returns (proto.Tokens);
      */
-    refreshToken(input: RefreshTokenRequest, options?: RpcOptions): UnaryCall<RefreshTokenRequest, TokenResponse>;
+    refreshToken(input: RefreshTokenRequest, options?: RpcOptions): UnaryCall<RefreshTokenRequest, Tokens>;
     /**
      * @generated from protobuf rpc: RevokeRefreshToken(proto.RefreshTokenRequest) returns (google.protobuf.Empty);
      */
@@ -70,61 +75,68 @@ export class ProvidersAppServiceClient implements IProvidersAppServiceClient, Se
     /**
      * Providers
      *
-     * @generated from protobuf rpc: ListProviders(google.protobuf.Empty) returns (proto.ListProviderResponse);
+     * @generated from protobuf rpc: ListProviders(google.protobuf.Empty) returns (proto.ListOfProviders);
      */
-    listProviders(input: Empty, options?: RpcOptions): UnaryCall<Empty, ListProviderResponse> {
+    listProviders(input: Empty, options?: RpcOptions): UnaryCall<Empty, ListOfProviders> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
-        return stackIntercept<Empty, ListProviderResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<Empty, ListOfProviders>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: ReadProvider(proto.ReadProviderRequest) returns (proto.ReadProviderResponse);
+     * @generated from protobuf rpc: ReadProvider(proto.ReadProviderRequest) returns (proto.Provider);
      */
-    readProvider(input: ReadProviderRequest, options?: RpcOptions): UnaryCall<ReadProviderRequest, ReadProviderResponse> {
+    readProvider(input: ReadProviderRequest, options?: RpcOptions): UnaryCall<ReadProviderRequest, Provider> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ReadProviderRequest, ReadProviderResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ReadProviderRequest, Provider>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: CreateProvider(proto.CreateProviderRequest) returns (proto.CreateProviderResponse);
+     * @generated from protobuf rpc: CreateProvider(proto.CreateProviderRequest) returns (proto.ProviderId);
      */
-    createProvider(input: CreateProviderRequest, options?: RpcOptions): UnaryCall<CreateProviderRequest, CreateProviderResponse> {
+    createProvider(input: CreateProviderRequest, options?: RpcOptions): UnaryCall<CreateProviderRequest, ProviderId> {
         const method = this.methods[2], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateProviderRequest, CreateProviderResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<CreateProviderRequest, ProviderId>("unary", this._transport, method, opt, input);
     }
     /**
      * Users
      *
-     * @generated from protobuf rpc: GetToken(proto.LoginRequest) returns (proto.TokenResponse);
+     * @generated from protobuf rpc: GetToken(proto.LoginRequest) returns (proto.Tokens);
      */
-    getToken(input: LoginRequest, options?: RpcOptions): UnaryCall<LoginRequest, TokenResponse> {
+    getToken(input: LoginRequest, options?: RpcOptions): UnaryCall<LoginRequest, Tokens> {
         const method = this.methods[3], opt = this._transport.mergeOptions(options);
-        return stackIntercept<LoginRequest, TokenResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<LoginRequest, Tokens>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: GetUserInfo(google.protobuf.Empty) returns (proto.UserInfo);
+     */
+    getUserInfo(input: Empty, options?: RpcOptions): UnaryCall<Empty, UserInfo> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<Empty, UserInfo>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RegisterUser(proto.RegistrationRequest) returns (google.protobuf.Empty);
      */
     registerUser(input: RegistrationRequest, options?: RpcOptions): UnaryCall<RegistrationRequest, Empty> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<RegistrationRequest, Empty>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: RefreshToken(proto.RefreshTokenRequest) returns (proto.TokenResponse);
+     * @generated from protobuf rpc: RefreshToken(proto.RefreshTokenRequest) returns (proto.Tokens);
      */
-    refreshToken(input: RefreshTokenRequest, options?: RpcOptions): UnaryCall<RefreshTokenRequest, TokenResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RefreshTokenRequest, TokenResponse>("unary", this._transport, method, opt, input);
+    refreshToken(input: RefreshTokenRequest, options?: RpcOptions): UnaryCall<RefreshTokenRequest, Tokens> {
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RefreshTokenRequest, Tokens>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RevokeRefreshToken(proto.RefreshTokenRequest) returns (google.protobuf.Empty);
      */
     revokeRefreshToken(input: RefreshTokenRequest, options?: RpcOptions): UnaryCall<RefreshTokenRequest, Empty> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<RefreshTokenRequest, Empty>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RevokeAllRefreshTokens(google.protobuf.Empty) returns (google.protobuf.Empty);
      */
     revokeAllRefreshTokens(input: Empty, options?: RpcOptions): UnaryCall<Empty, Empty> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<Empty, Empty>("unary", this._transport, method, opt, input);
     }
 }

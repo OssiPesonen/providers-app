@@ -14,7 +14,7 @@ import (
 )
 
 // List all commands available for server
-func (s *Server) ListProviders(context context.Context, _ *emptypb.Empty) (*pb.ListProviderResponse, error) {
+func (s *Server) ListProviders(context context.Context, _ *emptypb.Empty) (*pb.ListOfProviders, error) {
 	providers, err := s.App.Services.Provider.ListProviders()
 
 	if err != nil {
@@ -22,9 +22,9 @@ func (s *Server) ListProviders(context context.Context, _ *emptypb.Empty) (*pb.L
 		return nil, err
 	}
 
-	providersSlice := []*pb.ReadProviderResponse{}
+	providersSlice := []*pb.Provider{}
 	for _, result := range *providers {
-		p := pb.ReadProviderResponse{
+		p := pb.Provider{
 			Id:             int32(result.Id),
 			Name:           result.Name,
 			Region:         result.Region,
@@ -35,12 +35,12 @@ func (s *Server) ListProviders(context context.Context, _ *emptypb.Empty) (*pb.L
 		providersSlice = append(providersSlice, &p)
 	}
 
-	return &pb.ListProviderResponse{
+	return &pb.ListOfProviders{
 		Providers: providersSlice,
 	}, nil
 }
 
-func (s *Server) ReadProvider(ctx context.Context, in *pb.ReadProviderRequest) (*pb.ReadProviderResponse, error) {
+func (s *Server) ReadProvider(ctx context.Context, in *pb.ReadProviderRequest) (*pb.Provider, error) {
 	id := in.Id
 	provider, err := s.App.Services.Provider.GetProvider(int(id))
 
@@ -56,13 +56,13 @@ func (s *Server) ReadProvider(ctx context.Context, in *pb.ReadProviderRequest) (
 		return nil, status.Error(codes.Internal, "Something went wrong")
 	}
 
-	return &pb.ReadProviderResponse{
+	return &pb.Provider{
 		Id:   int32(provider.Id),
 		Name: provider.Name,
 	}, nil
 }
 
-func (s *Server) CreateProvider(ctx context.Context, in *pb.CreateProviderRequest) (*pb.CreateProviderResponse, error) {
+func (s *Server) CreateProvider(ctx context.Context, in *pb.CreateProviderRequest) (*pb.ProviderId, error) {
 	userId := ctx.Value(interceptor.UserIdKey).(string)
 	if userId == "" {
 		return nil, status.Error(codes.FailedPrecondition, "user ID was not determined")
@@ -85,5 +85,5 @@ func (s *Server) CreateProvider(ctx context.Context, in *pb.CreateProviderReques
 		return nil, status.Error(e.Code, e.Message)
 	}
 
-	return &pb.CreateProviderResponse{Id: int32(providerId)}, nil
+	return &pb.ProviderId{Id: int32(providerId)}, nil
 }

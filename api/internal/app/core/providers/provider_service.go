@@ -11,6 +11,7 @@ import (
 // Define repository interface that this service needs
 type IProviderRepository interface {
 	List() (*[]models.Provider, error)
+	listForUser(userId int) (*[]models.Provider, error)
 	Read(id int) (*models.Provider, error)
 	Find(name string, city string) (*models.Provider, error)
 	Create(*models.Provider) (int, error)
@@ -34,6 +35,16 @@ func (s *ProviderService) ListProviders() (*[]models.Provider, error) {
 
 	if err != nil {
 		s.logger.Printf("Fetching providers failed: %v", err)
+		return nil, err
+	}
+
+	return providers, nil
+}
+
+func (s *ProviderService) ListProvidersForUser(userId int) (*[]models.Provider, error) {
+	providers, err := s.repository.listForUser(userId)
+	if err != nil {
+		s.logger.Printf("Fetching providers for user failed: %v", err)
 		return nil, err
 	}
 
