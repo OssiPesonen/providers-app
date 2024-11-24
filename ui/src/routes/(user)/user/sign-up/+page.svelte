@@ -6,18 +6,16 @@
 	import { goto } from '$app/navigation';
 	
 	// Assume users are authenticated
-	let isUserLoggedIn = $state(true);
+	const { data } = $props();
 
 	onMount(async () => {
 		if (isAuthenticated()) {
 			goto('/');
-		} else {
-			isUserLoggedIn = false;
 		}
 	});
 </script>
 
-{#if !isUserLoggedIn}
+{#if !data.isUserLoggedIn}
 	<div
 		class="container relative h-screen flex-col items-center justify-center grid lg:max-w-none grid-cols-1 lg:grid-cols-2 lg:px-0"
 	>
