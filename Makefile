@@ -1,12 +1,16 @@
 # Simple Makefile for a Go project
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
+build-client:
+	@echo "-- Building..."
+	@cd ui; yarn run build;
+	@echo "-- Build done. You can now serve the build using 'yarn run preview'"
 
 build-api:
-	@echo "Building..."
+	@echo "-- Building..."
 	@cd api; go build -o bin/main cmd/main.go
 	@echo "-- Build done. You can find the binary in api/bin/"
-	
+
 build-api-win:
 	@echo "Building app for Windows platform..."
 	@cd api; go build -o bin/main.exe cmd/main.go
