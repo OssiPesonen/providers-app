@@ -15,6 +15,7 @@ type IProviderRepository interface {
 	Read(id int) (*models.Provider, error)
 	Find(name string, city string) (*models.Provider, error)
 	Create(*models.Provider) (int, error)
+	Search(searchwords []string) (*[]models.Provider, error)
 }
 
 type ProviderService struct {
@@ -83,4 +84,14 @@ func (s *ProviderService) CreateProvider(provider *models.Provider) (int, error)
 	}
 
 	return id, nil
+}
+
+func (s *ProviderService) Search(searchWords []string) (*[]models.Provider, error) {
+	providers, err := s.repository.Search(searchWords)
+	if err != nil {
+		s.logger.Printf("Searching for providers has failed: %v", err)
+		return nil, err
+	}
+
+	return providers, nil
 }

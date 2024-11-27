@@ -23,6 +23,7 @@ const (
 	ProvidersAppService_ListProviders_FullMethodName          = "/proto.ProvidersAppService/ListProviders"
 	ProvidersAppService_ReadProvider_FullMethodName           = "/proto.ProvidersAppService/ReadProvider"
 	ProvidersAppService_CreateProvider_FullMethodName         = "/proto.ProvidersAppService/CreateProvider"
+	ProvidersAppService_SearchProviders_FullMethodName        = "/proto.ProvidersAppService/SearchProviders"
 	ProvidersAppService_GetToken_FullMethodName               = "/proto.ProvidersAppService/GetToken"
 	ProvidersAppService_GetUserInfo_FullMethodName            = "/proto.ProvidersAppService/GetUserInfo"
 	ProvidersAppService_RegisterUser_FullMethodName           = "/proto.ProvidersAppService/RegisterUser"
@@ -39,6 +40,7 @@ type ProvidersAppServiceClient interface {
 	ListProviders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListOfProviders, error)
 	ReadProvider(ctx context.Context, in *ReadProviderRequest, opts ...grpc.CallOption) (*Provider, error)
 	CreateProvider(ctx context.Context, in *CreateProviderRequest, opts ...grpc.CallOption) (*ProviderId, error)
+	SearchProviders(ctx context.Context, in *SearchProvider, opts ...grpc.CallOption) (*ListOfProviders, error)
 	// Users
 	GetToken(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Tokens, error)
 	GetUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfo, error)
@@ -80,6 +82,16 @@ func (c *providersAppServiceClient) CreateProvider(ctx context.Context, in *Crea
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProviderId)
 	err := c.cc.Invoke(ctx, ProvidersAppService_CreateProvider_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *providersAppServiceClient) SearchProviders(ctx context.Context, in *SearchProvider, opts ...grpc.CallOption) (*ListOfProviders, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListOfProviders)
+	err := c.cc.Invoke(ctx, ProvidersAppService_SearchProviders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -154,6 +166,7 @@ type ProvidersAppServiceServer interface {
 	ListProviders(context.Context, *emptypb.Empty) (*ListOfProviders, error)
 	ReadProvider(context.Context, *ReadProviderRequest) (*Provider, error)
 	CreateProvider(context.Context, *CreateProviderRequest) (*ProviderId, error)
+	SearchProviders(context.Context, *SearchProvider) (*ListOfProviders, error)
 	// Users
 	GetToken(context.Context, *LoginRequest) (*Tokens, error)
 	GetUserInfo(context.Context, *emptypb.Empty) (*UserInfo, error)
@@ -179,6 +192,9 @@ func (UnimplementedProvidersAppServiceServer) ReadProvider(context.Context, *Rea
 }
 func (UnimplementedProvidersAppServiceServer) CreateProvider(context.Context, *CreateProviderRequest) (*ProviderId, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProvider not implemented")
+}
+func (UnimplementedProvidersAppServiceServer) SearchProviders(context.Context, *SearchProvider) (*ListOfProviders, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchProviders not implemented")
 }
 func (UnimplementedProvidersAppServiceServer) GetToken(context.Context, *LoginRequest) (*Tokens, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
@@ -269,6 +285,24 @@ func _ProvidersAppService_CreateProvider_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProvidersAppServiceServer).CreateProvider(ctx, req.(*CreateProviderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProvidersAppService_SearchProviders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchProvider)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProvidersAppServiceServer).SearchProviders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProvidersAppService_SearchProviders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProvidersAppServiceServer).SearchProviders(ctx, req.(*SearchProvider))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -399,6 +433,10 @@ var ProvidersAppService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateProvider",
 			Handler:    _ProvidersAppService_CreateProvider_Handler,
+		},
+		{
+			MethodName: "SearchProviders",
+			Handler:    _ProvidersAppService_SearchProviders_Handler,
 		},
 		{
 			MethodName: "GetToken",

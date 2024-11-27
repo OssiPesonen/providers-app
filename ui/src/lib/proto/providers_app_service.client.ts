@@ -9,6 +9,7 @@ import type { RegistrationRequest } from "./providers_app_service";
 import type { UserInfo } from "./providers_app_service";
 import type { Tokens } from "./providers_app_service";
 import type { LoginRequest } from "./providers_app_service";
+import type { SearchProvider } from "./providers_app_service";
 import type { ProviderId } from "./providers_app_service";
 import type { CreateProviderRequest } from "./providers_app_service";
 import type { Provider } from "./providers_app_service";
@@ -36,6 +37,10 @@ export interface IProvidersAppServiceClient {
      * @generated from protobuf rpc: CreateProvider(proto.CreateProviderRequest) returns (proto.ProviderId);
      */
     createProvider(input: CreateProviderRequest, options?: RpcOptions): UnaryCall<CreateProviderRequest, ProviderId>;
+    /**
+     * @generated from protobuf rpc: SearchProviders(proto.SearchProvider) returns (proto.ListOfProviders);
+     */
+    searchProviders(input: SearchProvider, options?: RpcOptions): UnaryCall<SearchProvider, ListOfProviders>;
     /**
      * Users
      *
@@ -96,47 +101,54 @@ export class ProvidersAppServiceClient implements IProvidersAppServiceClient, Se
         return stackIntercept<CreateProviderRequest, ProviderId>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: SearchProviders(proto.SearchProvider) returns (proto.ListOfProviders);
+     */
+    searchProviders(input: SearchProvider, options?: RpcOptions): UnaryCall<SearchProvider, ListOfProviders> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SearchProvider, ListOfProviders>("unary", this._transport, method, opt, input);
+    }
+    /**
      * Users
      *
      * @generated from protobuf rpc: GetToken(proto.LoginRequest) returns (proto.Tokens);
      */
     getToken(input: LoginRequest, options?: RpcOptions): UnaryCall<LoginRequest, Tokens> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<LoginRequest, Tokens>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: GetUserInfo(google.protobuf.Empty) returns (proto.UserInfo);
      */
     getUserInfo(input: Empty, options?: RpcOptions): UnaryCall<Empty, UserInfo> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<Empty, UserInfo>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RegisterUser(proto.RegistrationRequest) returns (google.protobuf.Empty);
      */
     registerUser(input: RegistrationRequest, options?: RpcOptions): UnaryCall<RegistrationRequest, Empty> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<RegistrationRequest, Empty>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RefreshToken(proto.RefreshTokenRequest) returns (proto.Tokens);
      */
     refreshToken(input: RefreshTokenRequest, options?: RpcOptions): UnaryCall<RefreshTokenRequest, Tokens> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<RefreshTokenRequest, Tokens>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RevokeRefreshToken(proto.RefreshTokenRequest) returns (google.protobuf.Empty);
      */
     revokeRefreshToken(input: RefreshTokenRequest, options?: RpcOptions): UnaryCall<RefreshTokenRequest, Empty> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<RefreshTokenRequest, Empty>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RevokeAllRefreshTokens(google.protobuf.Empty) returns (google.protobuf.Empty);
      */
     revokeAllRefreshTokens(input: Empty, options?: RpcOptions): UnaryCall<Empty, Empty> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<Empty, Empty>("unary", this._transport, method, opt, input);
     }
 }

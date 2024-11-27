@@ -6,12 +6,12 @@ build-client:
 	@cd ui; yarn run build;
 	@echo "-- Build done. You can now serve the build using 'yarn run preview'"
 
-build-api:
+build-server:
 	@echo "-- Building..."
 	@cd api; go build -o bin/main cmd/main.go
 	@echo "-- Build done. You can find the binary in api/bin/"
 
-build-api-win:
+build-server-win:
 	@echo "Building app for Windows platform..."
 	@cd api; go build -o bin/main.exe cmd/main.go
 	@echo "-- Build done. You can find the executable in api/bin/"
@@ -19,7 +19,7 @@ build-api-win:
 dev-server: docker-up dev-api
 
 # Run the Go application
-dev-api:
+dev-server:
 	@cd api; go run cmd/main.go
 
 dev-client:

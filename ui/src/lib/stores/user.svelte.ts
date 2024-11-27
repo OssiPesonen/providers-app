@@ -1,5 +1,5 @@
 import type { RpcError } from 'grpc-web';
-import { apiClient } from '$lib/api/client';
+import apiClient from '$lib/api/client';
 import { getAccessToken } from './auth.svelte';
 import { Empty } from '$lib/proto/google/protobuf/empty';
 import type { UserInfo } from '$lib/proto/providers_app_service';

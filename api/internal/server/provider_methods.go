@@ -2,7 +2,9 @@ package server
 
 import (
 	"context"
+	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/ossipesonen/providers-app/internal/app/core/models"
 	"github.com/ossipesonen/providers-app/internal/server/interceptor"
@@ -86,4 +88,31 @@ func (s *Server) CreateProvider(ctx context.Context, in *pb.CreateProviderReques
 	}
 
 	return &pb.ProviderId{Id: int32(providerId)}, nil
+}
+
+func (s *Server) SearchProviders(ctx context.Context, in *pb.SearchProvider) (*pb.ListOfProviders, error) {
+	sw := regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(in.SearchWords, "")
+	providers, err := s.App.Services.Provider.Search(strings.Split(strings.TrimSpace(sw), " "))
+
+	if err != nil {
+		s.Logger.Printf("Searching providers failed: %v", err)
+		return nil, err
+	}
+
+	providersSlice := []*pb.Provider{}
+	for _, result := range *providers {
+		p := pb.Provider{
+			Id:             int32(result.Id),
+			Name:           result.Name,
+			Region:         result.Region,
+			City:           result.City,
+			LineOfBusiness: result.LineOfBusiness,
+		}
+
+		providersSlice = append(providersSlice, &p)
+	}
+
+	return &pb.ListOfProviders{
+		Providers: providersSlice,
+	}, nil
 }

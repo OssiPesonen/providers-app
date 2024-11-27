@@ -11,6 +11,7 @@ service ProvidersAppService {
     rpc ListProviders (google.protobuf.Empty) returns (ListOfProviders) {}
     rpc ReadProvider (ReadProviderRequest) returns (Provider) {}
     rpc CreateProvider (CreateProviderRequest) returns (ProviderId) {}
+    rpc SearchProviders (SearchProvider) returns (ListOfProviders) {}
 
     // Users
     rpc GetToken(LoginRequest) returns (Tokens) {}
@@ -19,6 +20,10 @@ service ProvidersAppService {
     rpc RefreshToken(RefreshTokenRequest) returns (Tokens) {}
     rpc RevokeRefreshToken(RefreshTokenRequest) returns (google.protobuf.Empty) {}
     rpc RevokeAllRefreshTokens(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+}
+
+message SearchProvider {
+    string searchWords = 1;
 }
 
 // Provider messages

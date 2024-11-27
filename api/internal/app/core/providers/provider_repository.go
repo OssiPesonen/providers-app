@@ -3,6 +3,7 @@ package providers
 import (
 	"errors"
 	"log"
+	"strings"
 
 	"github.com/ossipesonen/providers-app/internal/app/core/models"
 	"github.com/ossipesonen/providers-app/pkg/database"
@@ -83,4 +84,15 @@ func (p *ProviderRepository) Find(name string, city string) (*models.Provider, e
 	}
 
 	return provider, nil
+}
+
+func (p *ProviderRepository) Search(searchwords []string) (*[]models.Provider, error) {
+	providers := []models.Provider{}
+
+	q := p.db.Handle().SQL().Select("id", "name", "city", "region", "line_of_business").From("providers").Where("search_vector @@ to_tsquery(?)", strings.Join(searchwords, " & "))
+	if err := q.All(&providers); err != nil {
+		return nil, err
+	}
+
+	return &providers, nil
 }

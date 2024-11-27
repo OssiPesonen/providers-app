@@ -43,6 +43,8 @@ type ProviderService interface {
 	GetProvider(id int) (*models.Provider, error)
 	// Create a new provider in the system
 	CreateProvider(provider *models.Provider) (int, error)
+	// Search
+	Search(searchwords []string) (*[]models.Provider, error)
 }
 
 type Services struct {

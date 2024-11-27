@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 import type { RpcError } from 'grpc-web';
-import { apiClient } from '$lib/api/client';
+import apiClient from '$lib/api/client';
 import { getLocalStorageItem, removeLocalStorageItem, setLocalStorageItem } from '$lib/utils/localStorage.util';
 
 let error = $state('');

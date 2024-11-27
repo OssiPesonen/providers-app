@@ -8,3 +8,5 @@ export const apiClient = () => {
 
     return new ProvidersAppServiceClient(transport);
 }
+
+export default Object.freeze(apiClient);

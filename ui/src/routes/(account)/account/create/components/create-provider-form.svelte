@@ -6,7 +6,7 @@
 	import * as Form from '$components/ui/form';
 	import * as Alert from '$components/ui/alert';
 	import { Input } from '$components/ui/input/index.js';
-	import { apiClient } from '$lib/api/client';
+	import apiClient from '$lib/api/client';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import { Icon } from 'svelte-icons-pack';
