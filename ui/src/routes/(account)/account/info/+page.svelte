@@ -7,7 +7,7 @@
 	const providers = user.info?.providerAccounts;
 </script>
 
-<div class="w-full h-screen flex items-center justify-center">
+<div class="w-full flex items-center justify-center">
 	<div class="w-full max-w-5xl">
 		<h1 class="tracking-tight">My account</h1>
 		<h3>Providers</h3>

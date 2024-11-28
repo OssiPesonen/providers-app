@@ -46,7 +46,7 @@ func (p *ProviderRepository) List() (*[]models.Provider, error) {
 // List providers using user ID as the filter condition
 func (p *ProviderRepository) listForUser(userId int) (*[]models.Provider, error) {
 	providers := []models.Provider{}
-	q := p.db.Handle().SQL().Select("id", "name", "city", "region", "line_of_business").From("providers").Where("\"userId\" = ?", userId)
+	q := p.db.Handle().SQL().Select("id", "name", "city", "region", "line_of_business").From("providers").Where("\"user_id\" = ?", userId)
 	if err := q.All(&providers); err != nil {
 		return nil, err
 	}
