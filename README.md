@@ -1,3 +1,7 @@
+> [!WARNING]
+> I am archiving this project as non-complete. I used it to get more accustomed to how Go applications are structured and built, and learn the basics of gRPC with protocol buffers. Svelte was a stretch goal, but with Sveltekit it proved to be a technology that is highly opinionated in it's desire to push people to use server-side rendering with front-end applications. Sveltekit itself would've been more than sufficient in building this app end-to-end without all this complexity.
+> gRPC also showed me that it is not ready for browser-to-server communication and should mainly be used for server-to-server communication where you also share the protocol buffer files in a shared package. This actually aligns well with Google's monorepo-style development. People have either used Envoy as a proxy for communication, which adds unnecessary complexity, or they've used something like a backend-for-frontend approach to act as a translation layer for communication to the server using gRPC. This is unnecessary imo.
+
 # Project providers.app
 
 This is a hobby application that has taken it's inspiration from the lights you see next to an exam room (green, yellow, red). The idea is to provide a platform for service providers that take on clients to let people know if they have capacity, if they might have capacity (can be contacted) or they are fully booked. Users should be able to list service providers in a specific location, for a specific service.
